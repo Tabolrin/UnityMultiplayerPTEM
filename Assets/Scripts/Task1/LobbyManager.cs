@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Fusion;
 using Fusion.Sockets;
 using TMPro;
@@ -21,21 +22,30 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     List<GameObject> playersTextBoxes = new List<GameObject>();
    
     
-    [Header("Dependencies")]
-    
+    [Header("Critical Dependencies")]
     [SerializeField] NetworkRunner networkRunner;
     [SerializeField] private GameObject sessionButtonPrefab;
     [SerializeField] private GameObject playerNamePrefab;
+    [SerializeField] private GameObject playerNameTextPrefab;
     
+    [Header("Panels")]
     [SerializeField] private GameObject sessionListPanel;
     [SerializeField] private GameObject Lobbies;
+    [SerializeField] private GameObject MidSessionPanel;
     [SerializeField] private GameObject NewSessionButtonLocations;
+    [SerializeField] private GameObject playerNamesListPanel;
     
+    [Header("Player Id's")]
+    [SerializeField] private TMP_Text[] playerNamesTexts;
+    
+    [Header("Player Id's")]
     [SerializeField] private Button startSessionButton;
     [SerializeField] private Button endSessionButton;
     
+    [Header("Player Id's")]
     [SerializeField] private TMP_InputField newSessionNameInput;
     [SerializeField] private TMP_InputField numberOfPlayersInput;
+    
 
 
     private void Awake()
@@ -53,6 +63,23 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
             GameMode = GameMode.Shared,
             SessionName = newSessionNameInput.text,
             PlayerCount = int.Parse(numberOfPlayersInput.text),
+            CustomLobbyName = networkRunner.LobbyInfo.Name,
+        });
+
+        if (resTask.Ok)
+            OnGameStarted(networkRunner);
+        else
+        {
+            Debug.LogError($"Game start failed: {resTask.ShutdownReason}");
+        }
+    }
+    
+    public async void JoinSession(TMP_Text sessionName)
+    {
+        StartGameResult resTask = await networkRunner.StartGame(new StartGameArgs()
+        {
+            GameMode = GameMode.Shared,
+            SessionName = sessionName.text,
             CustomLobbyName = networkRunner.LobbyInfo.Name,
         });
 
@@ -115,21 +142,26 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     private void OnGameStarted(NetworkRunner obj)
     {
         Debug.Log("Game Started");
+        sessionListPanel.SetActive(false);
+        MidSessionPanel.SetActive(true);
     }
     
     public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
     {
         Debug.Log("OnSessionListUpdated");
         
-        foreach (var VARIABLE in playersTextBoxes)
-            Destroy(VARIABLE);
+        foreach (var textBox in playersTextBoxes)
+            Destroy(textBox);
         
         newSessionButtons.Clear();
         
         foreach (var session in sessionList)
         {
             GameObject newSessionButton = Instantiate(sessionButtonPrefab, NewSessionButtonLocations.transform);
-            newSessionButton.GetComponentInChildren<TextMeshProUGUI>().text = session.Name;
+            ButtonTextRefHolder newButton = newSessionButton.GetComponent<ButtonTextRefHolder>();
+            
+            newButton.buttonText.text = session.Name;
+            newButton.onButtonClick.AddListener(JoinSession);
             
             newSessionButtons.Add(newSessionButton);
         }
@@ -149,17 +181,18 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
 
     public void UpdatePlayersList()
     {
-        foreach (var VARIABLE in playersTextBoxes)
-            Destroy(VARIABLE);
+        List<PlayerRef> players = networkRunner.ActivePlayers.ToList();
         
-        playersTextBoxes.Clear();
-        
-        foreach (var session in networkRunner.ActivePlayers)
+        for(int i = 0; i < playerNamesTexts.Length; ++i)
         {
-            GameObject newSessionButton = Instantiate(sessionButtonPrefab, NewSessionButtonLocations.transform);
-            //newSessionButton.GetComponentInChildren<TextMeshProUGUI>().text = session.Name;
-            
-            newSessionButtons.Add(newSessionButton);
+            if(i >= players.Count())
+            {
+                playerNamesTexts[i].text = "";
+            }
+            else
+            {
+                playerNamesTexts[i].text = players[i].PlayerId.ToString();
+            }
         }
     }
 

@@ -94,12 +94,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 45
+  m_fontSize: 30
   m_fontSizeBase: 45
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 0
-  m_fontSizeMax: 0
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 10
+  m_fontSizeMax: 30
   m_fontStyle: 5
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -150,6 +150,7 @@ GameObject:
   - component: {fileID: 8002275043200916842}
   - component: {fileID: 5472898106948680780}
   - component: {fileID: 7336357046992008579}
+  - component: {fileID: 4567937319540975275}
   m_Layer: 5
   m_Name: SessionButton
   m_TagString: Untagged
@@ -257,5 +258,34 @@ MonoBehaviour:
   m_Interactable: 1
   m_TargetGraphic: {fileID: 5472898106948680780}
   m_OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4567937319540975275}
+        m_TargetAssemblyTypeName: ButtonTextRefHolder, Assembly-CSharp
+        m_MethodName: InvokeButtonClickEvent
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &4567937319540975275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6905490498365075140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1448ffd31ceb53d43ba604d9cd75e775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttonText: {fileID: 1981038349852209635}
+  thisButton: {fileID: 7336357046992008579}
+  onButtonClick:
     m_PersistentCalls:
       m_Calls: []
