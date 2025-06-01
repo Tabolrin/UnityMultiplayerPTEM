@@ -18,7 +18,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
 
     private string currentLobby;
     
-    List<GameObject> newSessionButtons = new List<GameObject>();
+    //List<GameObject> newSessionButtons = new List<GameObject>();
     List<GameObject> playersTextBoxes = new List<GameObject>();
    
     
@@ -32,17 +32,24 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     [SerializeField] private GameObject sessionListPanel;
     [SerializeField] private GameObject Lobbies;
     [SerializeField] private GameObject MidSessionPanel;
-    [SerializeField] private GameObject NewSessionButtonLocations;
-    [SerializeField] private GameObject playerNamesListPanel;
+    [SerializeField] private GameObject SessionButtonLocations;
+    [SerializeField] private GameObject newSessionPanel;
+    //[SerializeField] private GameObject playerNamesListPanel;
+
+    [Header("Buttons")]
+    [SerializeField] private Button[] lobbyButtons;
+    [SerializeField] private Button startSessionButton;
+    [SerializeField] private Button openNewSessionMenuButton;
+    List<Button> existingSessionButtons = new List<Button>();
     
     [Header("Player Id's")]
     [SerializeField] private TMP_Text[] playerNamesTexts;
     
-    [Header("Player Id's")]
-    [SerializeField] private Button startSessionButton;
-    [SerializeField] private Button endSessionButton;
+    //[Header("Player Id's")]
+    //[SerializeField] private Button startSessionButton;
+    //[SerializeField] private Button endSessionButton;
     
-    [Header("Player Id's")]
+    [Header("New Session Input")]
     [SerializeField] private TMP_InputField newSessionNameInput;
     [SerializeField] private TMP_InputField numberOfPlayersInput;
     
@@ -57,6 +64,8 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     {
         if (string.IsNullOrEmpty(newSessionNameInput.text) || string.IsNullOrEmpty(numberOfPlayersInput.text))
             return;
+
+        ToggleButtonInteractivity(startSessionButton);
         
         StartGameResult resTask = await networkRunner.StartGame(new StartGameArgs()
         {
@@ -67,15 +76,21 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         });
 
         if (resTask.Ok)
+        {
+            TogglePanelVisibility(newSessionPanel);
             OnGameStarted(networkRunner);
+        }
         else
         {
             Debug.LogError($"Game start failed: {resTask.ShutdownReason}");
+            ToggleButtonInteractivity(startSessionButton);
         }
     }
     
     public async void JoinSession(TMP_Text sessionName)
     {
+        ToggleButtonInteractivity(existingSessionButtons);
+        ToggleButtonInteractivity(openNewSessionMenuButton);
         StartGameResult resTask = await networkRunner.StartGame(new StartGameArgs()
         {
             GameMode = GameMode.Shared,
@@ -84,9 +99,13 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         });
 
         if (resTask.Ok)
+        {
             OnGameStarted(networkRunner);
+        }
         else
         {
+            ToggleButtonInteractivity(existingSessionButtons);
+            ToggleButtonInteractivity(openNewSessionMenuButton);
             Debug.LogError($"Game start failed: {resTask.ShutdownReason}");
         }
     }
@@ -97,12 +116,15 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         
         if (result.Ok)
         {
+            TogglePanelVisibility(Lobbies);
+            TogglePanelVisibility(sessionListPanel);
             Debug.Log("Joined Lobby!" + lobbyName);
             currentLobby = lobbyName;
         }
         else
         {
             Debug.LogError($"Game join failed: {result.ShutdownReason}");
+            ToggleButtonInteractivity(lobbyButtons);
         }
     }
     
@@ -129,7 +151,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     
     public void TogglePanelVisibility(GameObject panel)
     {
-        if (panel != null)
+        if (panel)
         {
             panel.SetActive(!panel.activeSelf);
         }
@@ -137,6 +159,29 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         {
             Debug.LogWarning("Panel is not assigned.");
         }
+    }
+    public void ToggleButtonInteractivity(Button button)
+    {
+        if (button)
+            button.interactable = !button.interactable;
+        else
+            Debug.LogWarning("Button is not assigned");
+    }
+    public void ToggleButtonInteractivity(Button[] buttons)
+    {
+        if (buttons != null)
+            foreach (Button button in buttons)
+                ToggleButtonInteractivity(button);
+        else
+            Debug.LogWarning("Button is not assigned");
+    }
+    public void ToggleButtonInteractivity(List<Button> buttons)
+    {
+        if (buttons != null)
+            foreach (Button button in buttons)
+                ToggleButtonInteractivity(button);
+        else
+            Debug.LogWarning("Button is not assigned");
     }
 
     private void OnGameStarted(NetworkRunner obj)
@@ -152,18 +197,18 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         
         foreach (var textBox in playersTextBoxes)
             Destroy(textBox);
-        
-        newSessionButtons.Clear();
+
+        existingSessionButtons.Clear();
         
         foreach (var session in sessionList)
         {
-            GameObject newSessionButton = Instantiate(sessionButtonPrefab, NewSessionButtonLocations.transform);
+            GameObject newSessionButton = Instantiate(sessionButtonPrefab, SessionButtonLocations.transform);
             ButtonTextRefHolder newButton = newSessionButton.GetComponent<ButtonTextRefHolder>();
             
             newButton.buttonText.text = session.Name;
             newButton.onButtonClick.AddListener(JoinSession);
-            
-            newSessionButtons.Add(newSessionButton);
+
+            existingSessionButtons.Add(newButton.thisButton);
         }
     }
     
