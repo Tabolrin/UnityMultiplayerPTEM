@@ -1,18 +1,26 @@
+using System;
 using Fusion;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class ReadyManager : NetworkBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public event Action onReadyCounterReachedMax;
+    public int readyCounter = 0;
+    
+    [Rpc]
+    public void SetReadyRPC(RpcInfo info = default)
     {
-        Debug.Log("Ready manager start");
+        Debug.Log($"Player id {info.Source.PlayerId} is ready");
+        readyCounter++;
+        if(readyCounter >= 2)
+            onReadyCounterReachedMax?.Invoke();
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void Spawned()
     {
-        
+        base.Spawned();
+       // LobbyManager.Instance.readyManagerInstance = this;
+     //   onReadyCounterReachedMax += LobbyManager.Instance.MaxPlayersReady;
     }
+    
 }

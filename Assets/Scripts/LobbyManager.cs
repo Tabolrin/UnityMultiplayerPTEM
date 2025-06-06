@@ -12,6 +12,13 @@ using Unity.VisualScripting;
 
 public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
 {
+    public const string GAME_SCENE_NAME = "Game";
+
+    
+    //Relevant Instances
+    public static LobbyManager Instance;
+    public static ReadyManager readyManagerInstance;
+    
     const string catsLobby = "Cats";
     const string puppiesLobby = "Puppies";
     const string capysLobby = "Capybara's";
@@ -27,6 +34,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     [SerializeField] private GameObject sessionButtonPrefab;
     [SerializeField] private GameObject playerNamePrefab;
     [SerializeField] private GameObject playerNameTextPrefab;
+    [SerializeField] private SceneManager sceneManager;
     
     [Header("Panels")]
     [SerializeField] private GameObject sessionListPanel;
@@ -58,6 +66,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     private void Awake()
     {
         networkRunner.AddCallbacks(this);
+        Instance = this;
     }
     
     public async void StartSession()
@@ -91,6 +100,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     {
         ToggleButtonInteractivity(existingSessionButtons);
         ToggleButtonInteractivity(openNewSessionMenuButton);
+        
         StartGameResult resTask = await networkRunner.StartGame(new StartGameArgs()
         {
             GameMode = GameMode.Shared,
@@ -160,6 +170,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
             Debug.LogWarning("Panel is not assigned.");
         }
     }
+    
     public void ToggleButtonInteractivity(Button button)
     {
         if (button)
@@ -167,6 +178,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         else
             Debug.LogWarning("Button is not assigned");
     }
+    
     public void ToggleButtonInteractivity(Button[] buttons)
     {
         if (buttons != null)
@@ -175,6 +187,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         else
             Debug.LogWarning("Button is not assigned");
     }
+    
     public void ToggleButtonInteractivity(List<Button> buttons)
     {
         if (buttons != null)
@@ -187,8 +200,9 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     private void OnGameStarted(NetworkRunner obj)
     {
         Debug.Log("Game Started");
-        sessionListPanel.SetActive(false);
-        MidSessionPanel.SetActive(true);
+        //sessionListPanel.SetActive(false);
+        sceneManager.MoveToScene(GAME_SCENE_NAME);
+        //MidSessionPanel.SetActive(true);
     }
     
     public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
