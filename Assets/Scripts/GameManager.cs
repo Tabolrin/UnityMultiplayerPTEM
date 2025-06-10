@@ -52,7 +52,7 @@ public class GameManager : NetworkBehaviour
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     private void RPCRequestSpawnPointRpc(int playerColorIndex, RpcInfo info = default)
     {
-        Debug.Log("helloooooooooooooooooooooooooooooooooooooooooooo");
+        Debug.Log("helloooo");
         
         int spawnSpawnIndex = 0;
         SpawnPoint targetSpawnPoint;
@@ -64,7 +64,7 @@ public class GameManager : NetworkBehaviour
         } while (targetSpawnPoint.isTaken);
     
         targetSpawnPoint.isTaken = true;
-        Debug.Log("byeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+        Debug.Log("byeee");
         RPCSetSpawnPoint(info.Source, spawnSpawnIndex, playerColorIndex);
     }
     
