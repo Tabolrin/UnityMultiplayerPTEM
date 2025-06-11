@@ -15,7 +15,7 @@ public class ChatManager : NetworkBehaviour, INetworkRunnerCallbacks
     [SerializeField] public int maxChatMessages = 8; // Maximum number of chat messages to keep in the queue
     //[SerializeField] private GameObject chatMessagePrefab;
     //[SerializeField] private GameObject chatGrid;
-    //[SerializeField] private TMP_InputField inputField;
+    [SerializeField] private TMP_InputField inputField;
     [SerializeField] private TMP_Dropdown targetPlayersDropdown;
 
     [SerializeField] private TMP_Text[] chatMessages;
@@ -44,6 +44,15 @@ public class ChatManager : NetworkBehaviour, INetworkRunnerCallbacks
         FillTargetPlayerList();
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            ActuallySendChat(inputField.text);
+            inputField.text = "";
+        }
+    }
+
     
     [Rpc]
     private void RPCWhisper([RpcTarget] PlayerRef targetPlayer, string messageInfo, RpcInfo info = default)//, int playerColorIndex)
@@ -51,11 +60,12 @@ public class ChatManager : NetworkBehaviour, INetworkRunnerCallbacks
         if (runner.LocalPlayer.PlayerId == targetPlayer.PlayerId)
             AddChatMessage(messageInfo);
     }
-    
-    
+
+
     [Rpc]
     private void RPCMessageAll(string messageInfo, RpcInfo info = default)//, int playerColorIndex)
     {
+        Debug.Log("Inside RPCMessageAll");
         AddChatMessage(messageInfo);
     }
     
@@ -77,16 +87,16 @@ public class ChatManager : NetworkBehaviour, INetworkRunnerCallbacks
     {
         for(int i = chatMessages.Length - 1; i >= 0; --i)
         {
-            //if(!chatMessages[i].ToString().IsNullOrEmpty())
-            //{
+            if(chatQueue.Count > i)
+            {
                 chatMessages[i].text =  chatQueue.ElementAt(i);
-            //}
+            }
         }
     }
 
     public void ActuallySendChat(string text)
     {
-        if (targetPlayersDropdown.value.ToString() == ALL_STR)
+        //if (targetPlayersDropdown.value.ToString() == ALL_STR)
             RPCMessageAll(text);
         //else
            // RPCWhisper(targetPlayersDropdown.value.ToString())
@@ -94,6 +104,8 @@ public class ChatManager : NetworkBehaviour, INetworkRunnerCallbacks
     
     private void AddChatMessage(string messageText)
     {
+        Debug.Log("Inside AddChatMessage");
+
         chatQueue.Enqueue(messageText);
         
         if (chatQueue.Count > maxChatMessages)
