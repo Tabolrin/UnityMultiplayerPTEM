@@ -51,7 +51,6 @@ public class GameManager : NetworkBehaviour
         RPCRequestSpawnPointRpc(playerColorIndex);
         RPCToggleButtonRpc(playerColorIndex);
     }
-
     
     
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
