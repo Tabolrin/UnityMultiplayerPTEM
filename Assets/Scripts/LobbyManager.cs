@@ -10,6 +10,13 @@ using Unity.Multiplayer;
 using Unity.VisualScripting;
 
 
+struct PlayerData
+{
+    public string playerId; 
+    public string playerName;
+    public Color playerColor;
+}
+
 public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
 {
     public const string GAME_SCENE_NAME = "Game";
@@ -25,7 +32,6 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
 
     private string currentLobby;
     
-    //List<GameObject> newSessionButtons = new List<GameObject>();
     List<GameObject> playersTextBoxes = new List<GameObject>();
    
     
@@ -47,15 +53,11 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     [Header("Buttons")]
     [SerializeField] private Button[] lobbyButtons;
     [SerializeField] private Button startSessionButton;
-    //[SerializeField] private Button openNewSessionMenuButton;
     List<Button> existingSessionButtons = new List<Button>();
     
     [Header("Player Id's")]
     [SerializeField] private TMP_Text[] playerNamesTexts;
     
-    //[Header("Player Id's")]
-    //[SerializeField] private Button startSessionButton;
-    //[SerializeField] private Button endSessionButton;
     
     [Header("New Session Input")]
     [SerializeField] private TMP_InputField newSessionNameInput;
@@ -65,6 +67,8 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
 
     private void Awake()
     {
+        DontDestroyOnLoad(gameObject);
+        
         networkRunner.AddCallbacks(this);
         Instance = this;
     }

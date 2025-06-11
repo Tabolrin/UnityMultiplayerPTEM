@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class GameManager : NetworkBehaviour
 {
-    private NetworkRunner nr;
+    private NetworkRunner runner;
     
     //public Transform playerSpawnPoint;
     public SpawnPoint[] tenPlayerSpawnPoints;
@@ -17,12 +17,14 @@ public class GameManager : NetworkBehaviour
 
     [SerializeField] private GameObject CharacterSelectPanel;
     
+    
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        nr = NetworkRunner.GetRunnerForScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+        runner = NetworkRunner.GetRunnerForScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
  
-        if (!nr.IsRunning)
+        if (!runner.IsRunning)
         {
             Debug.LogWarning("NetworkRunner or GameManager not initialized. Cannot call RPC.");
             return;
@@ -33,17 +35,7 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-    // public void SpawnPlayer(GameObject coloredPlayerPrefab)
-    // {
-    //     SpawnPoint targetSpawnPoint;
-    //     do
-    //     {
-    //         targetSpawnPoint = tenPlayerSpawnPoints[Random.Range(0, tenPlayerSpawnPoints.Length)];
-    //     } while (targetSpawnPoint.isTaken);
-    //     
-    //     targetSpawnPoint.isTaken = true;
-    //     _runner.SpawnAsync(coloredPlayerPrefab, targetSpawnPoint.transform.position, targetSpawnPoint.transform.rotation);
-    // }
+
     
     public void CallRpc(int playerColorIndex)
     {
@@ -75,11 +67,11 @@ public class GameManager : NetworkBehaviour
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     private void RPCSetSpawnPoint([RpcTarget] PlayerRef targetPlayer, int spawnPointIndex, int playerColorIndex)
     {
-        Debug.Log("RPCSetSpawnPoint AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        Debug.Log("RPCSetSpawnPoint");
         SpawnPoint targetSpawnPoint = tenPlayerSpawnPoints[spawnPointIndex];
         
         targetSpawnPoint.isTaken = true;
-        nr.SpawnAsync(characterColoredPrefabs[playerColorIndex], targetSpawnPoint.transform.position, targetSpawnPoint.transform.rotation);
+        runner.SpawnAsync(characterColoredPrefabs[playerColorIndex], targetSpawnPoint.transform.position, targetSpawnPoint.transform.rotation);
         
         CharacterSelectPanel.SetActive(false);
     }
