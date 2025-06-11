@@ -4,7 +4,6 @@ using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-
 public class GameManager : NetworkBehaviour
 {
     private NetworkRunner nr;
@@ -50,6 +49,7 @@ public class GameManager : NetworkBehaviour
     {
         Debug.Log("Calling RPCRequestSpawnPointRpc");
         RPCRequestSpawnPointRpc(playerColorIndex);
+        RPCToggleButtonRpc(playerColorIndex);
     }
 
     
@@ -82,7 +82,14 @@ public class GameManager : NetworkBehaviour
         targetSpawnPoint.isTaken = true;
         nr.SpawnAsync(characterColoredPrefabs[playerColorIndex], targetSpawnPoint.transform.position, targetSpawnPoint.transform.rotation);
         
-        CharacterSelectButton[playerColorIndex].interactable = false;
         CharacterSelectPanel.SetActive(false);
     }
+
+    [Rpc]
+    private void RPCToggleButtonRpc(int playerColorIndex)
+    {
+        CharacterSelectButton[playerColorIndex].interactable = false;
+    }
+    
+    
 }
