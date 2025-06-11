@@ -34,14 +34,6 @@ MonoBehaviour:
       m_StreamLogsToMainEditor: 1
       m_LogsColor: {r: 0.3643, g: 0.581, b: 0.8679, a: 1}
       m_Arguments: -screen-fullscreen 0 -screen-width 1024 -screen-height 720
-  - Name: not me2
-    <CorrespondingNodeId>k__BackingField: 
-    m_Nodes: []
-    m_BuildProfile: {fileID: 11400000, guid: 1f766a93bc35267488959a27ae7c3e14, type: 2}
-    advancedConfiguration:
-      m_StreamLogsToMainEditor: 1
-      m_LogsColor: {r: 0.3643, g: 0.581, b: 0.8679, a: 1}
-      m_Arguments: -screen-fullscreen 0 -screen-width 1024 -screen-height 720
   m_RemoteInstances: []
   m_OverridePort: 0
   m_Port: 0

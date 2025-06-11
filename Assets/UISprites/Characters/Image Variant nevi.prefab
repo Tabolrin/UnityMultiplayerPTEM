@@ -20,6 +20,10 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 0.008155022
       objectReference: {fileID: 0}
+    - target: {fileID: 3267983116450082121, guid: 92ecf24180bed27489dd4d7f18492e5a, type: 3}
+      propertyPath: SortKey
+      value: 1502206262
+      objectReference: {fileID: 0}
     - target: {fileID: 6410003941770201688, guid: 92ecf24180bed27489dd4d7f18492e5a, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -102,7 +106,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6449100638918520211, guid: 92ecf24180bed27489dd4d7f18492e5a, type: 3}
       propertyPath: m_Name
-      value: Image Variant 4
+      value: Image Variant nevi
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

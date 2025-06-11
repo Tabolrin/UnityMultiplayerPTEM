@@ -1,6 +1,8 @@
 using Fusion;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 
 public class GameManager : NetworkBehaviour
@@ -12,11 +14,14 @@ public class GameManager : NetworkBehaviour
     
     public GameObject[] characterColoredPrefabs = new GameObject[10];
     
+    public Button[] CharacterSelectButton = new Button[10];
+
+    [SerializeField] private GameObject CharacterSelectPanel;
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         nr = NetworkRunner.GetRunnerForScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
-        //rn = FindFirstObjectByType<NetworkRunner>();
  
         if (!nr.IsRunning)
         {
@@ -71,10 +76,13 @@ public class GameManager : NetworkBehaviour
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     private void RPCSetSpawnPoint([RpcTarget] PlayerRef targetPlayer, int spawnPointIndex, int playerColorIndex)
     {
-        Debug.Log("RPCSetSpawnPoint");
+        Debug.Log("RPCSetSpawnPoint AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         SpawnPoint targetSpawnPoint = tenPlayerSpawnPoints[spawnPointIndex];
         
         targetSpawnPoint.isTaken = true;
         nr.SpawnAsync(characterColoredPrefabs[playerColorIndex], targetSpawnPoint.transform.position, targetSpawnPoint.transform.rotation);
+        
+        CharacterSelectButton[playerColorIndex].interactable = false;
+        CharacterSelectPanel.SetActive(false);
     }
 }

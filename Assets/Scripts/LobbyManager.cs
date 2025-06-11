@@ -47,7 +47,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     [Header("Buttons")]
     [SerializeField] private Button[] lobbyButtons;
     [SerializeField] private Button startSessionButton;
-    [SerializeField] private Button openNewSessionMenuButton;
+    //[SerializeField] private Button openNewSessionMenuButton;
     List<Button> existingSessionButtons = new List<Button>();
     
     [Header("Player Id's")]
@@ -99,7 +99,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     public async void JoinSession(TMP_Text sessionName)
     {
         ToggleButtonInteractivity(existingSessionButtons);
-        ToggleButtonInteractivity(openNewSessionMenuButton);
+        //ToggleButtonInteractivity(openNewSessionMenuButton);
         
         StartGameResult resTask = await networkRunner.StartGame(new StartGameArgs()
         {
@@ -115,7 +115,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         else
         {
             ToggleButtonInteractivity(existingSessionButtons);
-            ToggleButtonInteractivity(openNewSessionMenuButton);
+            //ToggleButtonInteractivity(openNewSessionMenuButton);
             Debug.LogError($"Game start failed: {resTask.ShutdownReason}");
         }
     }
