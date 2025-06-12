@@ -204,9 +204,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     private void OnGameStarted(NetworkRunner obj)
     {
         Debug.Log("Game Started");
-        //sessionListPanel.SetActive(false);
-        sceneManager.MoveToScene(GAME_SCENE_NAME);
-        //MidSessionPanel.SetActive(true);
+        sceneManager.OnlineMoveToScene(GAME_SCENE_NAME);
     }
     
     public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)

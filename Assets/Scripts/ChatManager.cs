@@ -5,6 +5,7 @@ using Fusion;
 using Fusion.Sockets;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using WebSocketSharp;
 
 
@@ -12,11 +13,10 @@ public class ChatManager : NetworkBehaviour, INetworkRunnerCallbacks
 {
     private const string ALL_STR = "All";
     
-    [SerializeField] public int maxChatMessages = 7; // Maximum number of chat messages to keep in the queue
-    //[SerializeField] private GameObject chatMessagePrefab;
-    //[SerializeField] private GameObject chatGrid;
+    [SerializeField] public int maxChatMessages = 7; 
     [SerializeField] private TMP_InputField inputField;
     [SerializeField] private TMP_Dropdown targetPlayersDropdown;
+
 
     [SerializeField] private TMP_Text[] chatTxtArr;
     
@@ -61,40 +61,29 @@ public class ChatManager : NetworkBehaviour, INetworkRunnerCallbacks
     [Rpc]
     private void RPCWhisper([RpcTarget] PlayerRef targetPlayer, string messageInfo, RpcInfo info = default)//, int playerColorIndex)
     {
-        if (runner.LocalPlayer.PlayerId == targetPlayer.PlayerId || runner.LocalPlayer.PlayerId == info.Source.PlayerId)
-            AddChatMessage(messageInfo);
+        AddChatMessage(messageInfo);
     }
     
-    // [Rpc]
-    // private void RPCWhisper([RpcTarget] PlayerRef recipient, string senderName, string message, RpcInfo info = default)
-    // {
-    //     if (runner.LocalPlayer == recipient || runner.LocalPlayer == info.Source)
-    //     {
-    //         AddChatMessage($"[Whisper] {senderName}: {message}");
-    //     }
-    // }
 
 
     [Rpc]
     private void RPCMessageAll(string messageInfo, RpcInfo info = default)//, int playerColorIndex)
     {
-        Debug.Log("Inside RPCMessageAll");
-        AddChatMessage(messageInfo);
+        AddChatMessage(info.Source.PlayerId + ": " + messageInfo);
     }
     
     
+ 
     
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
         FillTargetPlayerList();
-        Debug.Log("Special Player Joined: " + player + "aaaaaaaaaaaaaaaaaaaaaaaaaaaa");
     }
 
     
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
         FillTargetPlayerList();
-        Debug.Log(" Special Player Left: " + player+ "aaaaaaaaaaaaaaaaaaaaaaaaaaaa");
     }
     
     
@@ -110,6 +99,7 @@ public class ChatManager : NetworkBehaviour, INetworkRunnerCallbacks
         }
     }
 
+    
     public void ActuallySendChat(string text)
     {
         string selected = targetPlayersDropdown.options[targetPlayersDropdown.value].text;
@@ -121,20 +111,18 @@ public class ChatManager : NetworkBehaviour, INetworkRunnerCallbacks
         else
         {
             PlayerRef target = runner.ActivePlayers.FirstOrDefault(p => p.ToString() == selected);
-            RPCWhisper(target, $"[Whisper] {runner.LocalPlayer}: {text}");
+            RPCWhisper(target, $"/W {runner.LocalPlayer}: {text}");
+            AddChatMessage($"/W to {selected}: {text}");
         }
     }
+
     
     private void AddChatMessage(string messageText)
     {
-        Debug.Log("Inside AddChatMessage");
-
         chatQueue.Enqueue(messageText);
         
         if (chatQueue.Count > maxChatMessages)
-        {
             chatQueue.Dequeue();
-        }
         
         UpdateMessages();
     }

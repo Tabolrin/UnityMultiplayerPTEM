@@ -25,10 +25,18 @@ MonoBehaviour:
   m_EditorInstances: []
   m_LocalInstances:
   - Name: not me
-    <CorrespondingNodeId>k__BackingField: not me2 - Run
+    <CorrespondingNodeId>k__BackingField: not me - Run
     m_Nodes:
-    - not me2 - Build
-    - not me2 - Run
+    - not me - Build
+    - not me - Run
+    m_BuildProfile: {fileID: 11400000, guid: 1f766a93bc35267488959a27ae7c3e14, type: 2}
+    advancedConfiguration:
+      m_StreamLogsToMainEditor: 1
+      m_LogsColor: {r: 0.3643, g: 0.581, b: 0.8679, a: 1}
+      m_Arguments: -screen-fullscreen 0 -screen-width 1024 -screen-height 720
+  - Name: not me 2
+    <CorrespondingNodeId>k__BackingField: 
+    m_Nodes: []
     m_BuildProfile: {fileID: 11400000, guid: 1f766a93bc35267488959a27ae7c3e14, type: 2}
     advancedConfiguration:
       m_StreamLogsToMainEditor: 1

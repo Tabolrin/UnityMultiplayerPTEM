@@ -16,6 +16,9 @@ public class GameManager : NetworkBehaviour
     public Button[] CharacterSelectButton = new Button[10];
 
     [SerializeField] private GameObject CharacterSelectPanel;
+    [SerializeField] private GameObject killGameButton;
+    [SerializeField] private GameObject killGamePanel;
+    [SerializeField] private SceneManager sceneManager;
     
     
     
@@ -33,6 +36,9 @@ public class GameManager : NetworkBehaviour
         {
             Debug.Log("NetworkRunner initialized successfully.");
         }
+        
+        if(runner.IsSharedModeMasterClient)
+            killGameButton.SetActive(true);
     }
 
 
@@ -75,5 +81,25 @@ public class GameManager : NetworkBehaviour
         runner.SpawnAsync(characterColoredPrefabs[playerColorIndex], targetSpawnPoint.transform.position, targetSpawnPoint.transform.rotation);
         
         CharacterSelectButton[playerColorIndex].interactable = false;
+    }
+    
+    
+    [Rpc]
+    private void RPCKillGameForAll()
+    {
+        killGamePanel.SetActive(true);
+    }
+    
+    
+    public void MasterKillGame()
+    {
+        RPCKillGameForAll();
+    }
+
+    
+    public void KillGame()
+    {
+        runner.Shutdown();
+        sceneManager.OfflineMoveToScene("Lobby2");
     }
 }
