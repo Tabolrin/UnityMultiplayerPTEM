@@ -12,13 +12,13 @@ public class ChatManager : NetworkBehaviour, INetworkRunnerCallbacks
 {
     private const string ALL_STR = "All";
     
-    [SerializeField] public int maxChatMessages = 8; // Maximum number of chat messages to keep in the queue
+    [SerializeField] public int maxChatMessages = 7; // Maximum number of chat messages to keep in the queue
     //[SerializeField] private GameObject chatMessagePrefab;
     //[SerializeField] private GameObject chatGrid;
     [SerializeField] private TMP_InputField inputField;
     [SerializeField] private TMP_Dropdown targetPlayersDropdown;
 
-    [SerializeField] private TMP_Text[] chatMessages;
+    [SerializeField] private TMP_Text[] chatTxtArr;
     
     private NetworkRunner runner;
     
@@ -48,8 +48,11 @@ public class ChatManager : NetworkBehaviour, INetworkRunnerCallbacks
     {
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            ActuallySendChat(inputField.text);
-            inputField.text = "";
+            if (!string.IsNullOrWhiteSpace(inputField.text))
+            {
+                ActuallySendChat(inputField.text.Trim());
+                inputField.text = "";
+            }
         }
     }
 
@@ -85,11 +88,12 @@ public class ChatManager : NetworkBehaviour, INetworkRunnerCallbacks
     
     private void UpdateMessages()
     {
-        for(int i = chatMessages.Length - 1; i >= 0; --i)
+        for(int i = chatTxtArr.Length - 1; i >= 0; --i)
         {
             if(chatQueue.Count > i)
             {
-                chatMessages[i].text =  chatQueue.ElementAt(i);
+                Debug.Log(i + chatQueue.ElementAt(i));
+                chatTxtArr[i].text =  chatQueue.ElementAt(chatQueue.Count - 1 - i);
             }
         }
     }
@@ -97,7 +101,7 @@ public class ChatManager : NetworkBehaviour, INetworkRunnerCallbacks
     public void ActuallySendChat(string text)
     {
         //if (targetPlayersDropdown.value.ToString() == ALL_STR)
-            RPCMessageAll(text);
+            RPCMessageAll($"{runner.LocalPlayer}: {text}");
         //else
            // RPCWhisper(targetPlayersDropdown.value.ToString())
     }
