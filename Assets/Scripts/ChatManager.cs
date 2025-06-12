@@ -64,15 +64,14 @@ public class ChatManager : NetworkBehaviour, INetworkRunnerCallbacks
             AddChatMessage(messageInfo);
     }
     
-    [Rpc]
-    private void RPCWhisper([RpcTarget] PlayerRef recipient, string senderName, string message, RpcInfo info = default)
-    {
-        
-        if (runner.LocalPlayer == recipient || runner.LocalPlayer == info.Source)
-        {
-            AddChatMessage($"[Whisper] {senderName}: {message}");
-        }
-    }
+    // [Rpc]
+    // private void RPCWhisper([RpcTarget] PlayerRef recipient, string senderName, string message, RpcInfo info = default)
+    // {
+    //     if (runner.LocalPlayer == recipient || runner.LocalPlayer == info.Source)
+    //     {
+    //         AddChatMessage($"[Whisper] {senderName}: {message}");
+    //     }
+    // }
 
 
     [Rpc]
@@ -87,12 +86,14 @@ public class ChatManager : NetworkBehaviour, INetworkRunnerCallbacks
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
         FillTargetPlayerList();
+        Debug.Log("Player Joined: " + player);
     }
 
     
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
         FillTargetPlayerList();
+        Debug.Log("Player Left: " + player);
     }
     
     
