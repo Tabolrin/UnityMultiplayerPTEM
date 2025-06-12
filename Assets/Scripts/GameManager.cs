@@ -41,7 +41,8 @@ public class GameManager : NetworkBehaviour
     {
         Debug.Log("Calling RPCRequestSpawnPointRpc");
         RPCRequestSpawnPointRpc(playerColorIndex);
-        RPCToggleButtonRpc(playerColorIndex);
+        
+        CharacterSelectPanel.SetActive(false);
     }
     
     
@@ -61,11 +62,11 @@ public class GameManager : NetworkBehaviour
     
         targetSpawnPoint.isTaken = true;
         Debug.Log("byeee");
-        RPCSetSpawnPoint(info.Source, spawnSpawnIndex, playerColorIndex);
+        RPCSetSpawnPoint(spawnSpawnIndex, playerColorIndex);
     }
     
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    private void RPCSetSpawnPoint([RpcTarget] PlayerRef targetPlayer, int spawnPointIndex, int playerColorIndex)
+    private void RPCSetSpawnPoint(int spawnPointIndex, int playerColorIndex)
     {
         Debug.Log("RPCSetSpawnPoint");
         SpawnPoint targetSpawnPoint = tenPlayerSpawnPoints[spawnPointIndex];
@@ -73,14 +74,6 @@ public class GameManager : NetworkBehaviour
         targetSpawnPoint.isTaken = true;
         runner.SpawnAsync(characterColoredPrefabs[playerColorIndex], targetSpawnPoint.transform.position, targetSpawnPoint.transform.rotation);
         
-        CharacterSelectPanel.SetActive(false);
-    }
-
-    [Rpc]
-    private void RPCToggleButtonRpc(int playerColorIndex)
-    {
         CharacterSelectButton[playerColorIndex].interactable = false;
     }
-    
-    
 }
