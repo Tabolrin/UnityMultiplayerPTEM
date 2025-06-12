@@ -86,14 +86,14 @@ public class ChatManager : NetworkBehaviour, INetworkRunnerCallbacks
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
         FillTargetPlayerList();
-        Debug.Log("Player Joined: " + player);
+        Debug.Log("Special Player Joined: " + player + "aaaaaaaaaaaaaaaaaaaaaaaaaaaa");
     }
 
     
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
         FillTargetPlayerList();
-        Debug.Log("Player Left: " + player);
+        Debug.Log(" Special Player Left: " + player+ "aaaaaaaaaaaaaaaaaaaaaaaaaaaa");
     }
     
     
