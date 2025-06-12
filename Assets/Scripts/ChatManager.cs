@@ -26,10 +26,6 @@ public class ChatManager : NetworkBehaviour, INetworkRunnerCallbacks
     
     List<PlayerData> playerDataList = new List<PlayerData>();//---------------------------------TODO
     
-    private void Awake()
-    {
-        runner.AddCallbacks(this);
-    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -43,6 +39,8 @@ public class ChatManager : NetworkBehaviour, INetworkRunnerCallbacks
         }
         else
             Debug.Log("NetworkRunner initialized successfully.");
+        
+        runner.AddCallbacks(this);
 
         FillTargetPlayerList();
     }
