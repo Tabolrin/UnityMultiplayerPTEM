@@ -209,15 +209,20 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     
     public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
     {
-        Debug.Log("OnSessionListUpdated");
-        
         foreach (var textBox in playersTextBoxes)
             Destroy(textBox);
 
+        playersTextBoxes.Clear();
+        
+        
+        foreach (var session in existingSessionButtons) 
+                    Destroy(session.gameObject);
+        
         existingSessionButtons.Clear();
         
         foreach (var session in sessionList)
         {
+            Debug.Log(session.Name);
             GameObject newSessionButton = Instantiate(sessionButtonPrefab, SessionButtonLocations.transform);
             ButtonTextRefHolder newButton = newSessionButton.GetComponent<ButtonTextRefHolder>();
             
@@ -273,8 +278,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     {
     }
 
-
-
+    
     public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
     {
     }
@@ -310,8 +314,6 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     public void OnConnectedToServer(NetworkRunner runner)
     {
     }
-
-    
 
     public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data)
     {

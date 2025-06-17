@@ -1023,7 +1023,6 @@ GameObject:
   - component: {fileID: 340134762}
   - component: {fileID: 340134764}
   - component: {fileID: 340134763}
-  - component: {fileID: 340134765}
   m_Layer: 5
   m_Name: EndGameMsgPanel
   m_TagString: Untagged
@@ -1089,24 +1088,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 340134761}
   m_CullTransparentMesh: 1
---- !u!114 &340134765
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 340134761}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SortKey: 2497860240
-  ObjectInterest: 1
-  Flags: 262145
-  NestedObjects: []
-  NetworkedBehaviours: []
-  ForceRemoteRenderTimeframe: 0
 --- !u!1 &364890708
 GameObject:
   m_ObjectHideFlags: 0
@@ -1480,7 +1461,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1982581808}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: KillGame
+        m_MethodName: LeaveAfterHost
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
