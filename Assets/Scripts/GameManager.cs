@@ -15,7 +15,7 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     //public Transform playerSpawnPoint;
     public SpawnPoint[] tenPlayerSpawnPoints;
     
-    public GameObject[] characterColoredPrefabs = new GameObject[10];
+    public GameObject[] characterPrefabs = new GameObject[10];
     
     public Button[] CharacterSelectButton = new Button[10];
 
@@ -84,7 +84,7 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
         SpawnPoint targetSpawnPoint = tenPlayerSpawnPoints[spawnPointIndex];
         
         targetSpawnPoint.isTaken = true;
-        runner.SpawnAsync(characterColoredPrefabs[playerColorIndex], targetSpawnPoint.transform.position, targetSpawnPoint.transform.rotation);
+        runner.SpawnAsync(characterPrefabs[playerColorIndex], targetSpawnPoint.transform.position, targetSpawnPoint.transform.rotation);
         
         CharacterSelectButton[playerColorIndex].interactable = false;
     }

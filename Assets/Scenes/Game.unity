@@ -3593,8 +3593,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 956397336}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0, y: 3, z: -17.88}
+  m_LocalRotation: {x: 0.3610809, y: -0.06361963, z: 0.024700223, w: 0.93003386}
+  m_LocalPosition: {x: 0.019858235, y: 5.973808, z: -17.858686}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6146,17 +6146,17 @@ MonoBehaviour:
   - {fileID: 2102597091}
   - {fileID: 714991857}
   - {fileID: 1488871374}
-  characterColoredPrefabs:
-  - {fileID: 646507276638066227, guid: fa8ba1c64e144864094aa225a2e669a9, type: 3}
-  - {fileID: 646507276638066227, guid: a0c1e444f7188c34b9280212ba798474, type: 3}
-  - {fileID: 646507276638066227, guid: f28073cadf7c7ad4fb3b77480658d1b2, type: 3}
-  - {fileID: 646507276638066227, guid: 15b65e9a002c2db4bae85f6f0884bfa6, type: 3}
-  - {fileID: 646507276638066227, guid: 50b7057aab4870c49b1e911ba0521e39, type: 3}
-  - {fileID: 646507276638066227, guid: 3b2c9b5f620c4ad4a949185b5fafcb86, type: 3}
-  - {fileID: 646507276638066227, guid: e5a280e29e04a854092cf42e0ece2de5, type: 3}
-  - {fileID: 646507276638066227, guid: 3b18c27c946ea4249a92bb1ed34b7b0c, type: 3}
-  - {fileID: 646507276638066227, guid: 348159ba42b4ebf4da2145417ce35ef1, type: 3}
-  - {fileID: 646507276638066227, guid: adfcfed50b1bcda4f9b1aa02640277d6, type: 3}
+  characterPrefabs:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   CharacterSelectButton:
   - {fileID: 239188809}
   - {fileID: 502832902}
