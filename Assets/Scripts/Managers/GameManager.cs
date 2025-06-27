@@ -84,7 +84,8 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
         SpawnPoint targetSpawnPoint = tenPlayerSpawnPoints[spawnPointIndex];
         
         targetSpawnPoint.isTaken = true;
-        runner.SpawnAsync(characterPrefabs[playerColorIndex], targetSpawnPoint.transform.position, targetSpawnPoint.transform.rotation);
+        if(HasInputAuthority)
+            runner.SpawnAsync(characterPrefabs[playerColorIndex], targetSpawnPoint.transform.position, targetSpawnPoint.transform.rotation);
         
         CharacterSelectButton[playerColorIndex].interactable = false;
     }
