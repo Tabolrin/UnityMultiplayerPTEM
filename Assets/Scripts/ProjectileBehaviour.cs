@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class ProjectileBehaviour : NetworkBehaviour
 {
+    [Header("References")]
     [SerializeField] private Rigidbody rb;
-    [SerializeField] private NetworkTransform nt;
+
+    [Header("Projectile Settings")]
     [SerializeField] private float speed = 10f;
     [SerializeField] private float lifeTime = 10f;
     
@@ -31,11 +33,11 @@ public class ProjectileBehaviour : NetworkBehaviour
         {
             PlayerCharacter player = collider.gameObject.GetComponent<PlayerCharacter>();
             
-            if (!player.HasInputAuthority)
-            {
-                player.RPCTakeDamage(10);
-                Runner.Despawn(Object);
-            }
+            //if (!player.HasInputAuthority)
+            //{
+                //player.RPCTakeDamage(10);
+                //Runner.Despawn(Object);
+            //}
         }
     }
 }

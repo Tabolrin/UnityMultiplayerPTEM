@@ -1,11 +1,7 @@
 using UnityEngine;
 
-public class SetPlayerColor : MonoBehaviour
+public class SetPlayerCharacter : MonoBehaviour
 {
-    
-    
-    
-    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
