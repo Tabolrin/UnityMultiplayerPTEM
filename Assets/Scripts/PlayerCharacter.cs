@@ -1,12 +1,17 @@
-// using Fusion; // Uncomment when testing in a networked scene
+ using Fusion; // Uncomment when testing in a networked scene
+
+using Fusion;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// public class PlayerCharacter : NetworkBehaviour // ← Uncomment for Fusion
-public class PlayerCharacter : MonoBehaviour
+ public class PlayerCharacter : NetworkBehaviour // ← Uncomment for Fusion
+//public class PlayerCharacter : MonoBehaviour
 {
     public const string PLAYER_TAG = "Player";
 
+    [Networked, OnChangedRender(nameof(HpChanged))][field:SerializeField]
+    public int HP { get; set; }
+    
     [Header("References")]
     [SerializeField] private Rigidbody rb;
     [SerializeField] private Transform projectileSpawnPoint;
@@ -28,22 +33,27 @@ public class PlayerCharacter : MonoBehaviour
     private Vector2 moveInput;
 
     // Uncomment for Fusion
-    // public override void FixedUpdateNetwork()
-    // {
-    //     base.FixedUpdateNetwork();
-    //     HandleMovement();
-    // }
-
-    // Local testing
-    void Update()
+    public override void FixedUpdateNetwork()
     {
+        base.FixedUpdateNetwork();
         HandleMovement();
     }
 
+    // Local testing
+    // void Update()
+    // {
+    //     HandleMovement();
+    // }
+
+    private void HpChanged()
+    {
+        Debug.Log("new hp: " + HP);
+    }
+    
     private void HandleMovement()
     {
         // Uncomment this check in networked context
-        // if (!HasInputAuthority) return;
+        if (!HasInputAuthority) return;
         
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
@@ -55,13 +65,8 @@ public class PlayerCharacter : MonoBehaviour
         directionVector.y = 0;
         Vector3 movement = directionVector.normalized * moveSpeed;
         rb.linearVelocity = new Vector3(movement.x, rb.linearVelocity.y, movement.z);
-
-        //rotation
-        //Vector3 look = new Vector3(lookDirection.x, 0, lookDirection.y);
-        Model.transform.rotation = Quaternion.Euler(new Vector3(0, orbitAngle, 0));
         
-        //rb.angularVelocity = Vector3.zero;
-        //Model.transform.rotation = Quaternion.Euler(new Vector3(0, orbitAngle, 0));
+        Model.transform.rotation = Quaternion.Euler(new Vector3(0, orbitAngle, 0));
         
         if (animator != null)
             animator.SetFloat("MoveSpeed", moveInput.magnitude);
@@ -82,10 +87,10 @@ public class PlayerCharacter : MonoBehaviour
         if (jerryProjectilePrefab != null && projectileSpawnPoint != null)
         {
             // Fusion version:
-            // Runner.Spawn(jerryProjectilePrefab, projectileSpawnPoint.position, projectileSpawnPoint.rotation);
+             Runner.Spawn(jerryProjectilePrefab, projectileSpawnPoint.position, projectileSpawnPoint.rotation);
 
             // Local version:
-            Instantiate(jerryProjectilePrefab, projectileSpawnPoint.position, projectileSpawnPoint.rotation);
+            //Instantiate(jerryProjectilePrefab, projectileSpawnPoint.position, projectileSpawnPoint.rotation);
         }
     }
 
@@ -99,7 +104,7 @@ public class PlayerCharacter : MonoBehaviour
     }
 
     // Uncomment for Fusion networked damage
-    /*
+    //*
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void RPCTakeDamage(int damage, RpcInfo info = default)
     {
@@ -115,5 +120,5 @@ public class PlayerCharacter : MonoBehaviour
             }
         }
     }
-    */
+    //*/
 }

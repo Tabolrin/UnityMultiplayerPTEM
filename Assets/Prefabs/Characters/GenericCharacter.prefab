@@ -401,6 +401,7 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 9215044590466162269}
+  - {fileID: 2857918515287628794}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &9215044590466162269
 MonoBehaviour:
@@ -431,6 +432,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6230ecb3a6164aa438b4973f898f3c1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _HP: 0
   rb: {fileID: 0}
   projectileSpawnPoint: {fileID: 335093778401368820}
   jerryProjectilePrefab: {fileID: 8766717296039276825, guid: 32986cfaa8b474549a550d35c131fa4a, type: 3}
