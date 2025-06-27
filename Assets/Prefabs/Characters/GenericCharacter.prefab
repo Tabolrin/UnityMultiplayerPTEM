@@ -381,7 +381,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!114 &4189257176447214675
 MonoBehaviour:
@@ -432,8 +432,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6230ecb3a6164aa438b4973f898f3c1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _HP: 0
-  rb: {fileID: 0}
+  _HP: 100
+  rb: {fileID: 1339794000297067758}
   projectileSpawnPoint: {fileID: 335093778401368820}
   jerryProjectilePrefab: {fileID: 8766717296039276825, guid: 32986cfaa8b474549a550d35c131fa4a, type: 3}
   animator: {fileID: 722236833886418645}

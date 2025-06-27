@@ -106,14 +106,14 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     {
         if (runner != null && runner.IsRunning)
         {
-            runner.Shutdown(); // Triggers OnShutdown() => goes to Lobby2
+            runner.Shutdown(); 
         }
     }
 
     
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
     {
-        sceneManager.OfflineMoveToScene("Lobby2");
+        sceneManager.OfflineMoveToScene("Lobby");
     }
     
 

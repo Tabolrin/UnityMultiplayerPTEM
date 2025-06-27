@@ -8,6 +8,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 722236833886418645, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
+      propertyPath: m_Avatar
+      value: 
+      objectReference: {fileID: 9000000, guid: d670630d2432d92458922cfd37be3ec5, type: 3}
+    - target: {fileID: 722236833886418645, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 03705492951a0e54bb7a70f7f5c7e5cf, type: 2}
     - target: {fileID: 1214071701284824932, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -52,6 +60,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CharacterVariant Maria
       objectReference: {fileID: 0}
+    - target: {fileID: 2857918515287628794, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
+      propertyPath: Model
+      value: 
+      objectReference: {fileID: 6025791703365683355}
     - target: {fileID: 4189257176447214675, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
       propertyPath: SortKey
       value: 2940927005
@@ -149,6 +161,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d670630d2432d92458922cfd37be3ec5, type: 3}
+--- !u!1 &6025791703365683355 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: d670630d2432d92458922cfd37be3ec5, type: 3}
+  m_PrefabInstance: {fileID: 6872071305132684746}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6400803695363871265 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d670630d2432d92458922cfd37be3ec5, type: 3}
