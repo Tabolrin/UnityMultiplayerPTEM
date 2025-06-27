@@ -6055,16 +6055,16 @@ MonoBehaviour:
   - {fileID: 714991857}
   - {fileID: 1488871374}
   characterPrefabs:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 646507276638066227, guid: fa8ba1c64e144864094aa225a2e669a9, type: 3}
+  - {fileID: 646507276638066227, guid: a0c1e444f7188c34b9280212ba798474, type: 3}
+  - {fileID: 646507276638066227, guid: f28073cadf7c7ad4fb3b77480658d1b2, type: 3}
+  - {fileID: 646507276638066227, guid: 15b65e9a002c2db4bae85f6f0884bfa6, type: 3}
+  - {fileID: 646507276638066227, guid: 50b7057aab4870c49b1e911ba0521e39, type: 3}
+  - {fileID: 646507276638066227, guid: 3b2c9b5f620c4ad4a949185b5fafcb86, type: 3}
+  - {fileID: 646507276638066227, guid: e5a280e29e04a854092cf42e0ece2de5, type: 3}
+  - {fileID: 646507276638066227, guid: 3b18c27c946ea4249a92bb1ed34b7b0c, type: 3}
+  - {fileID: 646507276638066227, guid: 348159ba42b4ebf4da2145417ce35ef1, type: 3}
+  - {fileID: 646507276638066227, guid: adfcfed50b1bcda4f9b1aa02640277d6, type: 3}
   CharacterSelectButton:
   - {fileID: 239188809}
   - {fileID: 502832902}
