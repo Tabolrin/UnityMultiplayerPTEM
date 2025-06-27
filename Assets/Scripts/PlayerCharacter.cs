@@ -31,26 +31,55 @@ using UnityEngine.InputSystem;
 
     private float orbitAngle = 0f;
     private Vector2 moveInput;
+    private PlayerInput playerInput;
+    private Camera localCamera;
 
-    // Uncomment for Fusion
+    public override void Spawned()
+    {
+        if (HasInputAuthority)
+        {
+            Debug.Log("This is my character!");
+        
+            playerInput = GetComponent<PlayerInput>();
+            if (playerInput != null)
+                playerInput.enabled = true;
+
+            if (cameraTransform != null)
+            {
+                localCamera = cameraTransform.GetComponent<Camera>();
+                if (localCamera != null)
+                    localCamera.enabled = true;
+            }
+        }
+        else
+        {
+            playerInput = GetComponent<PlayerInput>();
+            if (playerInput != null)
+                playerInput.enabled = false;
+
+            if (cameraTransform != null)
+            {
+                localCamera = cameraTransform.GetComponent<Camera>();
+                if (localCamera != null)
+                    localCamera.enabled = false;
+            }
+        }
+    }
+
+    
     public override void FixedUpdateNetwork()
     {
         base.FixedUpdateNetwork();
         HandleMovement();
     }
-
-    // Local testing
-    // void Update()
-    // {
-    //     HandleMovement();
-    // }
+    
 
     private void HpChanged()
     {
         Debug.Log("new hp: " + HP);
     }
     
-    private void HandleMovement()
+    /*private void HandleMovement()
     {
         // Uncomment this check in networked context
         if (!HasInputAuthority) return;
@@ -70,7 +99,31 @@ using UnityEngine.InputSystem;
         
         if (animator != null)
             animator.SetFloat("MoveSpeed", moveInput.magnitude);
+    }*/
+    
+    
+    private void HandleMovement()
+    {
+        if (!HasInputAuthority || rb == null) return;
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
+        Vector3 movementForward = cameraTransform.forward * moveInput.y;
+        Vector3 movementRight = cameraTransform.right * moveInput.x;
+        Vector3 directionVector = movementForward + movementRight;
+        directionVector.y = 0f;
+
+        Vector3 movement = directionVector.normalized * moveSpeed;
+        rb.linearVelocity = new Vector3(movement.x, rb.linearVelocity.y, movement.z);
+    
+        if (moveInput.magnitude > 0.1f)
+            Model.transform.rotation = Quaternion.LookRotation(directionVector);
+
+        if (animator != null)
+            animator.SetFloat("MoveSpeed", moveInput.magnitude);
     }
+
 
     public void OnMove(InputAction.CallbackContext ctx)
     {
