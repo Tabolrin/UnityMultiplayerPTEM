@@ -24,8 +24,8 @@ public class PlayerCharacter : NetworkBehaviour, IStateAuthorityChanged
     [SerializeField] private float moveSpeed = 5f;
 
     [Header("Camera Orbit Settings")]
-    [SerializeField] private float orbitDistance = 4f;
-    [SerializeField] private float orbitHeight = 1.5f;
+    //[SerializeField] private float orbitDistance = 4f;
+    //[SerializeField] private float orbitHeight = 1.5f;
     [SerializeField] private float orbitSpeed = 15;
 
     private float orbitAngle = 0f;
@@ -42,6 +42,11 @@ public class PlayerCharacter : NetworkBehaviour, IStateAuthorityChanged
         base.FixedUpdateNetwork();
         HandleMovement();
     }
+
+    public void TurnOffAttackBool()
+    {
+        animator.SetBool("AttackB", false);
+    }
     
 
     private void HpChanged()
@@ -49,35 +54,12 @@ public class PlayerCharacter : NetworkBehaviour, IStateAuthorityChanged
         Debug.Log("---- OnChangeRender new hp: " + HP);
     }
     
-    /*private void HandleMovement()
-    {
-        // Uncomment this check in networked context
-        if (!HasInputAuthority) return;
-        
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-        
-        //position movement
-        Vector3 movementForward = cameraTransform.forward * moveInput.y;
-        Vector3 movementRight = cameraTransform.right * moveInput.x;
-        Vector3 directionVector = movementForward + movementRight;
-        directionVector.y = 0;
-        Vector3 movement = directionVector.normalized * moveSpeed;
-        rb.linearVelocity = new Vector3(movement.x, rb.linearVelocity.y, movement.z);
-        
-        Model.transform.rotation = Quaternion.Euler(new Vector3(0, orbitAngle, 0));
-        
-        if (animator != null)
-            animator.SetFloat("MoveSpeed", moveInput.magnitude);
-    }*/
-    
     
     private void HandleMovement()
     {
         if (rb == null) return;
-
-        //cameraTransform.rotation = Quaternion.Euler(0, orbitAngle , 0);
-        rb.rotation = Quaternion.Euler(0, orbitAngle, 0);//cameraTransform.rotation;
+        
+        rb.rotation = Quaternion.Euler(0, orbitAngle, 0);
         
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
@@ -89,9 +71,6 @@ public class PlayerCharacter : NetworkBehaviour, IStateAuthorityChanged
 
         Vector3 movement = directionVector.normalized * moveSpeed;
         rb.linearVelocity = new Vector3(movement.x, rb.linearVelocity.y, movement.z);
-        
-        //if (moveInput.magnitude > 0.1f)
-            
         
         if (animator != null)
             animator.SetFloat("MoveSpeed", moveInput.magnitude);
@@ -108,7 +87,8 @@ public class PlayerCharacter : NetworkBehaviour, IStateAuthorityChanged
         if (!ctx.started) return;
 
         if (animator != null)
-            animator.SetTrigger("Attack");
+            animator.SetBool("AttackB", true);
+            //animator.SetTrigger("Attack");
 
         if (jerryProjectilePrefab != null && projectileSpawnPoint != null)
         {
