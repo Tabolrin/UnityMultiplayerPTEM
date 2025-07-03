@@ -8,6 +8,42 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -5094624958531181406, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
+      propertyPath: Animator
+      value: 
+      objectReference: {fileID: 3989467688229328770}
+    - target: {fileID: -5094624958531181406, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
+      propertyPath: TotalWords
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -5094624958531181406, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
+      propertyPath: StateHashes.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: -5094624958531181406, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
+      propertyPath: TriggerHashes.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -5094624958531181406, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
+      propertyPath: 'StateHashes.Array.data[1]'
+      value: -2089788878
+      objectReference: {fileID: 0}
+    - target: {fileID: -5094624958531181406, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
+      propertyPath: 'StateHashes.Array.data[2]'
+      value: -1269438207
+      objectReference: {fileID: 0}
+    - target: {fileID: -5094624958531181406, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
+      propertyPath: 'StateHashes.Array.data[3]'
+      value: 1080829965
+      objectReference: {fileID: 0}
+    - target: {fileID: -5094624958531181406, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
+      propertyPath: 'StateHashes.Array.data[4]'
+      value: 1130333774
+      objectReference: {fileID: 0}
+    - target: {fileID: -5094624958531181406, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
+      propertyPath: 'TriggerHashes.Array.data[1]'
+      value: 1080829965
+      objectReference: {fileID: 0}
     - target: {fileID: 722236833886418645, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
       propertyPath: m_Avatar
       value: 
@@ -64,18 +100,30 @@ PrefabInstance:
       propertyPath: Model
       value: 
       objectReference: {fileID: 7667068854089747875}
+    - target: {fileID: 3138216985199326247, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
+      propertyPath: m_Avatar
+      value: 
+      objectReference: {fileID: 9000000, guid: 4ef410c65cf1c9b4a979ce023f928835, type: 3}
+    - target: {fileID: 3138216985199326247, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 03705492951a0e54bb7a70f7f5c7e5cf, type: 2}
     - target: {fileID: 4189257176447214675, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
       propertyPath: SortKey
       value: 818691570
       objectReference: {fileID: 0}
     - target: {fileID: 4189257176447214675, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
       propertyPath: NetworkedBehaviours.Array.size
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4189257176447214675, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
       propertyPath: 'NetworkedBehaviours.Array.data[1]'
       value: 
       objectReference: {fileID: 4285489223736424543}
+    - target: {fileID: 4189257176447214675, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
+      propertyPath: 'NetworkedBehaviours.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2710042821737383687}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -87,6 +135,22 @@ PrefabInstance:
 --- !u!4 &867364894306354369 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1214071701284824932, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
+  m_PrefabInstance: {fileID: 2076229802215990181}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2710042821737383687 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -5094624958531181406, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
+  m_PrefabInstance: {fileID: 2076229802215990181}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 506319458, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!95 &3989467688229328770 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 3138216985199326247, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
   m_PrefabInstance: {fileID: 2076229802215990181}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &4285489223736424543 stripped
@@ -156,7 +220,19 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 03705492951a0e54bb7a70f7f5c7e5cf, type: 2}
-    m_RemovedComponents: []
+    - target: {fileID: 5866666021909216657, guid: 4ef410c65cf1c9b4a979ce023f928835, type: 3}
+      propertyPath: m_WarningMessage
+      value: "\nBinding warning: Some generic clip(s) animate transforms that are
+        already bound by a Humanoid avatar. These transforms can only be changed
+        by Humanoid clips.\n\tTransform 'mixamorig:Hips'\n\tTransform 'mixamorig:LeftFoot'\n\tTransform
+        'mixamorig:LeftHandThumb2'\n\tTransform 'mixamorig:LeftHandIndex1'\n\tTransform
+        'mixamorig:LeftHandPinky2'\n\tTransform 'mixamorig:RightHandRing2'\n\tTransform
+        'mixamorig:Spine1'\n\tTransform 'mixamorig:LeftToeBase'\n\tTransform 'mixamorig:LeftHandThumb3'\n\tTransform
+        'mixamorig:RightArm'\n\tand more ...\n\tFrom animation clip 'Idle2'\n\tFrom
+        animation clip 'Run'\n\tFrom animation clip 'SpellCast'"
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5866666021909216657, guid: 4ef410c65cf1c9b4a979ce023f928835, type: 3}
     m_RemovedGameObjects:
     - {fileID: 825894089210680117, guid: 4ef410c65cf1c9b4a979ce023f928835, type: 3}
     m_AddedGameObjects: []

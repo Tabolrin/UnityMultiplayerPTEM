@@ -4,7 +4,7 @@ using Fusion;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
- public class PlayerCharacter : NetworkBehaviour // ← Uncomment for Fusion
+ public class PlayerCharacter : NetworkBehaviour, IStateAuthorityChanged  // ← Uncomment for Fusion
 //public class PlayerCharacter : MonoBehaviour
 {
     public const string PLAYER_TAG = "Player";
@@ -36,36 +36,13 @@ using UnityEngine.InputSystem;
 
     public override void Spawned()
     {
-        if (HasInputAuthority)
-        {
-            Debug.Log("This is my character!");
-        
-            playerInput = GetComponent<PlayerInput>();
-            if (playerInput != null)
-                playerInput.enabled = true;
+        playerInput = GetComponent<PlayerInput>();
+        localCamera = cameraTransform.GetComponent<Camera>();
 
-            if (cameraTransform != null)
-            {
-                localCamera = cameraTransform.GetComponent<Camera>();
-                if (localCamera != null)
-                    localCamera.enabled = true;
-            }
-        }
-        else
-        {
-            playerInput = GetComponent<PlayerInput>();
-            if (playerInput != null)
-                playerInput.enabled = false;
-
-            if (cameraTransform != null)
-            {
-                localCamera = cameraTransform.GetComponent<Camera>();
-                if (localCamera != null)
-                    localCamera.enabled = false;
-            }
-        }
+        StateAuthorityChanged();
     }
 
+    
     
     public override void FixedUpdateNetwork()
     {
@@ -173,5 +150,18 @@ using UnityEngine.InputSystem;
             }
         }
     }
-    //*/
+    //
+    public void StateAuthorityChanged()
+    {
+        Debug.Log("StateAuthorityChanged called for PlayerCharacter");
+        bool isMine = HasStateAuthority;
+
+        if (playerInput != null)
+            playerInput.enabled = isMine;
+
+        if (cameraTransform != null)
+            cameraTransform.gameObject.SetActive(isMine);
+    }
 }
+
+

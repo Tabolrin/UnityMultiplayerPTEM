@@ -74,26 +74,26 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     
         targetSpawnPoint.isTaken = true;
         Debug.Log("byeee");
-        RPCSetSpawnPoint(spawnSpawnIndex, playerColorIndex, info.Source);
+        RPCSetSpawnPoint(info.Source,spawnSpawnIndex, playerColorIndex);
     }
     
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    private void RPCSetSpawnPoint(int spawnPointIndex, int playerColorIndex, PlayerRef playerRef)
+    // [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    // private void RPCSetSpawnPoint(int spawnPointIndex, int playerColorIndex, PlayerRef playerRef)
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)] 
+    private void RPCSetSpawnPoint([RpcTarget] PlayerRef playerRef,int spawnPointIndex, int playerColorIndex)
     {
         Debug.Log("RPCSetSpawnPoint");
         SpawnPoint targetSpawnPoint = tenPlayerSpawnPoints[spawnPointIndex];
 
         targetSpawnPoint.isTaken = true;
-
-        if (HasStateAuthority)
-        {
-            runner.Spawn(
+        
+           var obj =  runner.Spawn
+            (
                 characterPrefabs[playerColorIndex],
                 targetSpawnPoint.transform.position,
-                targetSpawnPoint.transform.rotation,
-                playerRef // ✅ Assign input authority!
+                targetSpawnPoint.transform.rotation
             );
-        }
+           
 
         CharacterSelectButton[playerColorIndex].interactable = false;
     }
@@ -203,3 +203,5 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     
     #endregion
 }
+
+

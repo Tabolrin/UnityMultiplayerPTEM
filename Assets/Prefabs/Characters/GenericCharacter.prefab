@@ -183,7 +183,8 @@ GameObject:
   - component: {fileID: 4189257176447214675}
   - component: {fileID: 9215044590466162269}
   - component: {fileID: 2857918515287628794}
-  - component: {fileID: 722236833886418645}
+  - component: {fileID: -5094624958531181406}
+  - component: {fileID: 3138216985199326247}
   m_Layer: 0
   m_Name: GenericCharacter
   m_TagString: Player
@@ -402,6 +403,7 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 9215044590466162269}
   - {fileID: 2857918515287628794}
+  - {fileID: -5094624958531181406}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &9215044590466162269
 MonoBehaviour:
@@ -436,15 +438,33 @@ MonoBehaviour:
   rb: {fileID: 1339794000297067758}
   projectileSpawnPoint: {fileID: 335093778401368820}
   jerryProjectilePrefab: {fileID: 8766717296039276825, guid: 32986cfaa8b474549a550d35c131fa4a, type: 3}
-  animator: {fileID: 722236833886418645}
+  animator: {fileID: 0}
   cameraTransform: {fileID: 6357553498913823554}
   Model: {fileID: 0}
   health: 100
-  moveSpeed: 5
+  moveSpeed: 20
   orbitDistance: 5
   orbitHeight: 2
-  orbitSpeed: 30
---- !u!95 &722236833886418645
+  orbitSpeed: 0.8
+--- !u!114 &-5094624958531181406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1452581237047588246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 506319458, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Animator: {fileID: 3138216985199326247}
+  ApplyTiming: 2
+  SyncSettings: 79
+  StateHashes: 
+  TriggerHashes: 
+  TotalWords: 0
+--- !u!95 &3138216985199326247
 Animator:
   serializedVersion: 7
   m_ObjectHideFlags: 0
