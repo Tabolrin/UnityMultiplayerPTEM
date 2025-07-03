@@ -12,7 +12,6 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
 {
     private NetworkRunner runner;
     
-    //public Transform playerSpawnPoint;
     public SpawnPoint[] tenPlayerSpawnPoints;
     
     public GameObject[] characterPrefabs = new GameObject[10];

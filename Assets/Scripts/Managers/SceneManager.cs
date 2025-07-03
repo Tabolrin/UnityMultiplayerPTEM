@@ -6,11 +6,11 @@ public class SceneManager : MonoBehaviour
 {
     public NetworkRunner runner;
 
-    void Start()
+    public void OnlineMoveToScene(string sceneName)
     {
         if(runner == null)
             runner = NetworkRunner.GetRunnerForScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
-
+        
         if (!runner.IsRunning)
         {
             Debug.LogWarning("NetworkRunner or GameManager not initialized. Cannot call RPC.");
@@ -18,10 +18,7 @@ public class SceneManager : MonoBehaviour
         }
         else
             Debug.Log("NetworkRunner initialized successfully.");
-    }
-
-    public void OnlineMoveToScene(string sceneName)
-    {
+        
         runner.LoadScene(sceneName);
     }
     

@@ -1,7 +1,6 @@
 using Fusion; 
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UI;
 
 public class PlayerCharacter : NetworkBehaviour, IStateAuthorityChanged  
 {
@@ -24,8 +23,6 @@ public class PlayerCharacter : NetworkBehaviour, IStateAuthorityChanged
     [SerializeField] private float moveSpeed = 5f;
 
     [Header("Camera Orbit Settings")]
-    //[SerializeField] private float orbitDistance = 4f;
-    //[SerializeField] private float orbitHeight = 1.5f;
     [SerializeField] private float orbitSpeed = 15;
 
     private float orbitAngle = 0f;
@@ -88,7 +85,6 @@ public class PlayerCharacter : NetworkBehaviour, IStateAuthorityChanged
 
         if (animator != null)
             animator.SetBool("AttackB", true);
-            //animator.SetTrigger("Attack");
 
         if (jerryProjectilePrefab != null && projectileSpawnPoint != null)
         {
@@ -108,6 +104,12 @@ public class PlayerCharacter : NetworkBehaviour, IStateAuthorityChanged
     [Rpc(RpcSources.All, RpcTargets.All)]
     public void RPCTakeDamage(int damage, RpcInfo info = default)
     {
+        if (damage > HP || damage < 0)
+        {
+            Debug.Log($"Unusual damage dealt: {damage}");
+            return;
+        }
+        
         particleSystem.Play();
         
         HP -= damage;

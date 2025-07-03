@@ -27,13 +27,20 @@ public class ProjectileBehaviour : NetworkBehaviour
     
     private void OnTriggerEnter(Collider collider)
     {
-        if (HasStateAuthority && collider.gameObject.CompareTag(PlayerCharacter.PLAYER_TAG))
+        if (HasStateAuthority)
         {
-            PlayerCharacter player = collider.gameObject.GetComponent<PlayerCharacter>();
-            
-            if (!player.HasStateAuthority)
+            if (collider.gameObject.CompareTag(PlayerCharacter.PLAYER_TAG))
             {
-                player.RPCTakeDamage(10);
+                PlayerCharacter player = collider.gameObject.GetComponent<PlayerCharacter>();
+
+                if (!player.HasStateAuthority)
+                {
+                    player.RPCTakeDamage(10);
+                    Runner.Despawn(Object);
+                }
+            }
+            else
+            {
                 Runner.Despawn(Object);
             }
         }

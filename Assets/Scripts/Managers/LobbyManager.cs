@@ -20,7 +20,6 @@ struct PlayerData
 public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
 {
     public const string GAME_SCENE_NAME = "Game";
-
     
     //Relevant Instances
     public static LobbyManager Instance;
@@ -33,9 +32,10 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     private string currentLobby;
     
     List<GameObject> playersTextBoxes = new List<GameObject>();
-   
-    
-    [Header("Critical Dependencies")]
+
+
+    [Header("Critical Dependencies")] 
+    [SerializeField] private GameObject networkRunnerPrefab;
     [SerializeField] NetworkRunner networkRunner;
     [SerializeField] private GameObject sessionButtonPrefab;
     [SerializeField] private GameObject playerNamePrefab;
@@ -48,11 +48,13 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     [SerializeField] private GameObject MidSessionPanel;
     [SerializeField] private GameObject SessionButtonLocations;
     [SerializeField] private GameObject newSessionPanel;
+    [SerializeField] private GameObject lockedSessionPanel;
     //[SerializeField] private GameObject playerNamesListPanel;
 
     [Header("Buttons")]
     [SerializeField] private Button[] lobbyButtons;
     [SerializeField] private Button startSessionButton;
+    [SerializeField] private Button startGameButton;
     List<Button> existingSessionButtons = new List<Button>();
     
     [Header("Player Id's")]
@@ -62,6 +64,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     [Header("New Session Input")]
     [SerializeField] private TMP_InputField newSessionNameInput;
     [SerializeField] private TMP_InputField numberOfPlayersInput;
+    [SerializeField] private Toggle publicSessionToggle;
     
 
 
@@ -86,6 +89,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
             SessionName = newSessionNameInput.text,
             PlayerCount = int.Parse(numberOfPlayersInput.text),
             CustomLobbyName = networkRunner.LobbyInfo.Name,
+            IsVisible = publicSessionToggle.isOn
         });
 
         if (resTask.Ok)
@@ -103,7 +107,6 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     public async void JoinSession(TMP_Text sessionName)
     {
         ToggleButtonInteractivity(existingSessionButtons);
-        //ToggleButtonInteractivity(openNewSessionMenuButton);
         
         StartGameResult resTask = await networkRunner.StartGame(new StartGameArgs()
         {
@@ -118,10 +121,19 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         }
         else
         {
+            if (resTask.ShutdownReason == ShutdownReason.GameClosed)
+                lockedSessionPanel.SetActive(true);
+
+            ResetNetworkRunner();
+            
             ToggleButtonInteractivity(existingSessionButtons);
-            //ToggleButtonInteractivity(openNewSessionMenuButton);
             Debug.LogError($"Game start failed: {resTask.ShutdownReason}");
         }
+    }
+
+    private void ResetNetworkRunner()
+    {
+        networkRunner = Instantiate(networkRunnerPrefab).GetComponent<NetworkRunner>();
     }
     
     public async void JoinLobby(string lobbyName)
@@ -142,26 +154,6 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         }
     }
     
-    public void CheckCurrentLobby()
-    {
-        if (networkRunner != null && networkRunner.IsRunning)
-        {
-            string currentLobby = networkRunner.LobbyInfo.Name;
-            
-            if (!string.IsNullOrEmpty(currentLobby))
-            {
-                Debug.Log($"Currently in lobby: {currentLobby}");
-            }
-            else
-            {
-                Debug.Log("Not in any lobby.");
-            }
-        }
-        else
-        {
-            Debug.LogWarning("NetworkRunner is not running or not assigned.");
-        }
-    }
     
     public void TogglePanelVisibility(GameObject panel)
     {
@@ -175,6 +167,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         }
     }
     
+    
     public void ToggleButtonInteractivity(Button button)
     {
         if (button)
@@ -182,6 +175,8 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         else
             Debug.LogWarning("Button is not assigned");
     }
+    
+    
     
     public void ToggleButtonInteractivity(Button[] buttons)
     {
@@ -191,6 +186,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         else
             Debug.LogWarning("Button is not assigned");
     }
+    
     
     public void ToggleButtonInteractivity(List<Button> buttons)
     {
@@ -204,8 +200,28 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     private void OnGameStarted(NetworkRunner obj)
     {
         Debug.Log("Game Started");
-        sceneManager.OnlineMoveToScene(GAME_SCENE_NAME);
+        
+        TogglePanelVisibility(sessionListPanel);
+        TogglePanelVisibility(MidSessionPanel);
+        
+        if(networkRunner.IsSharedModeMasterClient)
+            startGameButton.gameObject.SetActive(true);
     }
+    
+    
+    public void MoveToGameScene()
+    {
+        if (networkRunner != null && networkRunner.IsRunning)
+        {
+            networkRunner.SessionInfo.IsOpen = false;
+            sceneManager.OnlineMoveToScene(GAME_SCENE_NAME);
+        }
+        else
+        {
+            Debug.LogWarning("NetworkRunner is not running or not assigned.");
+        }
+    }
+    
     
     public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
     {
@@ -222,6 +238,9 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         
         foreach (var session in sessionList)
         {
+            if(!session.IsVisible)
+                continue;
+            
             Debug.Log(session.Name);
             GameObject newSessionButton = Instantiate(sessionButtonPrefab, SessionButtonLocations.transform);
             ButtonTextRefHolder newButton = newSessionButton.GetComponent<ButtonTextRefHolder>();
