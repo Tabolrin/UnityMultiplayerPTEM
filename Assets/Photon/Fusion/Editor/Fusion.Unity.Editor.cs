@@ -12384,6 +12384,7 @@ namespace Fusion.Editor {
           dirty = true;
         }
       }
+      
       if (AnimatorControllerTools.GetController(animator.Animator) == null) {
         FusionEditorLog.Error($"Cannot bake {animator.name}'s {nameof(NetworkMecanimAnimator)} without an {nameof(UnityEditor.Animations.AnimatorController)} assigned to its {nameof(Animator)}!");
         return dirty;

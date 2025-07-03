@@ -1,16 +1,11 @@
- using Fusion; // Uncomment when testing in a networked scene
-
-using Fusion;
+using Fusion; 
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
- public class PlayerCharacter : NetworkBehaviour, IStateAuthorityChanged  // ← Uncomment for Fusion
-//public class PlayerCharacter : MonoBehaviour
+public class PlayerCharacter : NetworkBehaviour, IStateAuthorityChanged  
 {
     public const string PLAYER_TAG = "Player";
-
-    [Networked, OnChangedRender(nameof(HpChanged))][field:SerializeField]
-    public int HP { get; set; }
     
     [Header("References")]
     [SerializeField] private Rigidbody rb;
@@ -19,9 +14,13 @@ using UnityEngine.InputSystem;
     [SerializeField] private Animator animator;
     [SerializeField] private Transform cameraTransform;
     [SerializeField] private GameObject Model;
+    [SerializeField] private PlayerInput playerInput;
+    [SerializeField] private Camera localCamera;
+    [SerializeField] private  ParticleSystem particleSystem;
 
     [Header("Player Settings")]
-    [SerializeField] private int health = 100;
+    [Networked, OnChangedRender(nameof(HpChanged))][field:SerializeField]
+    public int HP { get; set; }
     [SerializeField] private float moveSpeed = 5f;
 
     [Header("Camera Orbit Settings")]
@@ -31,19 +30,13 @@ using UnityEngine.InputSystem;
 
     private float orbitAngle = 0f;
     private Vector2 moveInput;
-    private PlayerInput playerInput;
-    private Camera localCamera;
 
     public override void Spawned()
     {
-        playerInput = GetComponent<PlayerInput>();
-        localCamera = cameraTransform.GetComponent<Camera>();
-
         StateAuthorityChanged();
     }
 
-    
-    
+
     public override void FixedUpdateNetwork()
     {
         base.FixedUpdateNetwork();
@@ -53,7 +46,7 @@ using UnityEngine.InputSystem;
 
     private void HpChanged()
     {
-        Debug.Log("new hp: " + HP);
+        Debug.Log("---- OnChangeRender new hp: " + HP);
     }
     
     /*private void HandleMovement()
@@ -81,8 +74,11 @@ using UnityEngine.InputSystem;
     
     private void HandleMovement()
     {
-        if (!HasInputAuthority || rb == null) return;
+        if (rb == null) return;
 
+        //cameraTransform.rotation = Quaternion.Euler(0, orbitAngle , 0);
+        rb.rotation = Quaternion.Euler(0, orbitAngle, 0);//cameraTransform.rotation;
+        
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
@@ -93,10 +89,10 @@ using UnityEngine.InputSystem;
 
         Vector3 movement = directionVector.normalized * moveSpeed;
         rb.linearVelocity = new Vector3(movement.x, rb.linearVelocity.y, movement.z);
-    
-        if (moveInput.magnitude > 0.1f)
-            Model.transform.rotation = Quaternion.LookRotation(directionVector);
-
+        
+        //if (moveInput.magnitude > 0.1f)
+            
+        
         if (animator != null)
             animator.SetFloat("MoveSpeed", moveInput.magnitude);
     }
@@ -116,41 +112,35 @@ using UnityEngine.InputSystem;
 
         if (jerryProjectilePrefab != null && projectileSpawnPoint != null)
         {
-            // Fusion version:
-             Runner.Spawn(jerryProjectilePrefab, projectileSpawnPoint.position, projectileSpawnPoint.rotation);
-
-            // Local version:
-            //Instantiate(jerryProjectilePrefab, projectileSpawnPoint.position, projectileSpawnPoint.rotation);
+            Runner.Spawn(jerryProjectilePrefab, projectileSpawnPoint.position, transform.rotation);
         }
     }
+    
 
     public void OnLook(InputAction.CallbackContext ctx)
     {
-            Vector2 deltaMovement = ctx.ReadValue<Vector2>();
-            deltaMovement.y = 0;
-            orbitAngle += deltaMovement.x * orbitSpeed;
-            
-            cameraTransform.rotation = Quaternion.Euler(0, orbitAngle , 0);
+        Vector2 deltaMovement = ctx.ReadValue<Vector2>();
+        deltaMovement.y = 0;
+        orbitAngle += deltaMovement.x * orbitSpeed;
     }
 
-    // Uncomment for Fusion networked damage
-    //*
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+
+    [Rpc(RpcSources.All, RpcTargets.All)]
     public void RPCTakeDamage(int damage, RpcInfo info = default)
     {
-        if (HasStateAuthority)
-        {
-            health -= damage;
-            Debug.Log($"Player {info.Source.PlayerId} took {damage} damage. Remaining health: {health}");
+        particleSystem.Play();
+        
+        HP -= damage;
+        Debug.Log($"Player {info.Source.PlayerId} took {damage} damage. Remaining health: {HP}");
 
-            if (health <= 0)
-            {
-                Debug.Log($"Player {info.Source.PlayerId} has died.");
-                Runner.Despawn(Object);
-            }
+        if (HasStateAuthority && HP <= 0)
+        {
+            Debug.Log($"Player {info.Source.PlayerId} has died.");
+            Runner.Despawn(Object);
         }
     }
-    //
+    
+    
     public void StateAuthorityChanged()
     {
         Debug.Log("StateAuthorityChanged called for PlayerCharacter");

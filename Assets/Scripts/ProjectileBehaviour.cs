@@ -8,22 +8,20 @@ public class ProjectileBehaviour : NetworkBehaviour
     [SerializeField] private Rigidbody rb;
 
     [Header("Projectile Settings")]
-    [SerializeField] private float speed = 10f;
-    [SerializeField] private float lifeTime = 10f;
-    
-    
+    [SerializeField] private float speed = 5f;
+    [SerializeField] private float lifeTime = 2f;
+
     public override void FixedUpdateNetwork()
     {
         base.FixedUpdateNetwork();
         
         if(Object.HasStateAuthority)
-            transform.Translate(Vector3.forward * speed * Runner.DeltaTime);
+            rb.linearVelocity = transform.forward * speed;
         
         lifeTime -= Runner.DeltaTime;
-        
-        if(lifeTime<= 0)
+
+        if (lifeTime <= 0)
             Runner.Despawn(Object);
-        
     }
 
     
@@ -33,11 +31,11 @@ public class ProjectileBehaviour : NetworkBehaviour
         {
             PlayerCharacter player = collider.gameObject.GetComponent<PlayerCharacter>();
             
-            //if (!player.HasInputAuthority)
-            //{
-                //player.RPCTakeDamage(10);
-                //Runner.Despawn(Object);
-            //}
+            if (!player.HasStateAuthority)
+            {
+                player.RPCTakeDamage(10);
+                Runner.Despawn(Object);
+            }
         }
     }
 }

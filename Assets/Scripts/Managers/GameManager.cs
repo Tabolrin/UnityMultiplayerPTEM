@@ -77,8 +77,7 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
         RPCSetSpawnPoint(info.Source,spawnSpawnIndex, playerColorIndex);
     }
     
-    // [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    // private void RPCSetSpawnPoint(int spawnPointIndex, int playerColorIndex, PlayerRef playerRef)
+
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)] 
     private void RPCSetSpawnPoint([RpcTarget] PlayerRef playerRef,int spawnPointIndex, int playerCharacterIndex)
     {
@@ -97,6 +96,7 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
             RPCToggleCharSelectButton(playerCharacterIndex);
     }
 
+    
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     private void RPCToggleCharSelectButton( int playerCharacterIndex)
     {
