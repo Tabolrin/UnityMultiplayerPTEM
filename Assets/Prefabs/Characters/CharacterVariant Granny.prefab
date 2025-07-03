@@ -108,6 +108,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 03705492951a0e54bb7a70f7f5c7e5cf, type: 2}
+    - target: {fileID: 3138216985199326247, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
+      propertyPath: m_UpdateMode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4189257176447214675, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
       propertyPath: SortKey
       value: 2310076364
@@ -124,6 +128,14 @@ PrefabInstance:
       propertyPath: 'NetworkedBehaviours.Array.data[2]'
       value: 
       objectReference: {fileID: 2710042821737383687}
+    - target: {fileID: 4440148550366644164, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
+      propertyPath: m_Center.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8520905411159703496, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8520905411159703496, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
       propertyPath: m_DefaultControlScheme
       value: Keyboard&Mouse

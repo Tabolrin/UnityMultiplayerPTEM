@@ -158,7 +158,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6449100638918520211, guid: 92ecf24180bed27489dd4d7f18492e5a, type: 3}
       propertyPath: m_Name
-      value: Image Variant non
+      value: Image Variant BlueHairGirl
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -80,7 +80,7 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     // [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     // private void RPCSetSpawnPoint(int spawnPointIndex, int playerColorIndex, PlayerRef playerRef)
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)] 
-    private void RPCSetSpawnPoint([RpcTarget] PlayerRef playerRef,int spawnPointIndex, int playerColorIndex)
+    private void RPCSetSpawnPoint([RpcTarget] PlayerRef playerRef,int spawnPointIndex, int playerCharacterIndex)
     {
         Debug.Log("RPCSetSpawnPoint");
         SpawnPoint targetSpawnPoint = tenPlayerSpawnPoints[spawnPointIndex];
@@ -89,27 +89,29 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
         
            var obj =  runner.Spawn
             (
-                characterPrefabs[playerColorIndex],
+                characterPrefabs[playerCharacterIndex],
                 targetSpawnPoint.transform.position,
                 targetSpawnPoint.transform.rotation
             );
            
-
-        CharacterSelectButton[playerColorIndex].interactable = false;
+            RPCToggleCharSelectButton(playerCharacterIndex);
     }
 
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    private void RPCToggleCharSelectButton( int playerCharacterIndex)
+    {
+        CharacterSelectButton[playerCharacterIndex].interactable = false;
+    }
     
     
     public void MasterKillGame() { RPCKillGameForAll(); }
+    
     
     [Rpc]
     private void RPCKillGameForAll() { killGamePanel.SetActive(true); }
 
     
-    public void KillGame()
-    {
-        runner.Shutdown();
-    }
+    public void KillGame() { runner.Shutdown(); }
     
     
     public void LeaveAfterHost()

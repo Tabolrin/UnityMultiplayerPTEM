@@ -80,6 +80,14 @@ PrefabInstance:
       propertyPath: 'NetworkedBehaviours.Array.data[2]'
       value: 
       objectReference: {fileID: 4465186682409857276}
+    - target: {fileID: 4440148550366644164, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
+      propertyPath: m_Center.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8520905411159703496, guid: d2a4feab0e43ec046a635a7db516789a, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
