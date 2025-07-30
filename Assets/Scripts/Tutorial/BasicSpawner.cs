@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Fusion;
 using Fusion.Sockets;
 using UnityEngine;
+using UnitySceneManager = UnityEngine.SceneManagement.SceneManager;
 using UnityEngine.SceneManagement;
 using Timer = Unity.VisualScripting.Timer;
 
@@ -18,7 +19,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         if(_runner == null)
             _runner = gameObject.AddComponent<NetworkRunner>();;
         _runner.ProvideInput = true;
-        var scene = SceneRef.FromIndex(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
+        var scene = SceneRef.FromIndex(UnitySceneManager.GetActiveScene().buildIndex);
         var sceneInfo = new NetworkSceneInfo();
 
         if (scene.IsValid)
@@ -91,7 +92,6 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     }
     
     
-
     #region TheShdowRealm2.0
 
     public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
