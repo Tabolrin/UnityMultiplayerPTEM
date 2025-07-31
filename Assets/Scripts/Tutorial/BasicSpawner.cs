@@ -18,6 +18,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     {
         if(_runner == null)
             _runner = gameObject.AddComponent<NetworkRunner>();;
+        
         _runner.ProvideInput = true;
         var scene = SceneRef.FromIndex(UnitySceneManager.GetActiveScene().buildIndex);
         var sceneInfo = new NetworkSceneInfo();
