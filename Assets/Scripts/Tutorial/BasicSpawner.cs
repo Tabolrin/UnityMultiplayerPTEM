@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Fusion;
+using Fusion.Addons.Physics;
 using Fusion.Sockets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -12,13 +13,18 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     private NetworkRunner _runner;
     [SerializeField] private NetworkPrefabRef _playerPrefab;
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
-    private bool _mouseButton0;
-    
+    private bool _mouseButtonLeft;
+    private bool _mouseButtonRight;
     
     async void StartGame(GameMode mode)
     {
-        if(_runner == null)
+        if (_runner == null)
+        {
             _runner = gameObject.AddComponent<NetworkRunner>();;
+            var runnerSimulatePhysics3D = gameObject.AddComponent<RunnerSimulatePhysics3D>();
+            runnerSimulatePhysics3D.ClientPhysicsSimulation = ClientPhysicsSimulation.SimulateAlways;
+        }
+        
         _runner.ProvideInput = true;
         var scene = SceneRef.FromIndex(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
         var sceneInfo = new NetworkSceneInfo();
@@ -37,7 +43,8 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     private void Update()
     {
-        _mouseButton0 = Input.GetMouseButton(0) || _mouseButton0;
+        _mouseButtonLeft = Input.GetMouseButton(0) || _mouseButtonLeft;
+        _mouseButtonRight = Input.GetMouseButton(1) || _mouseButtonRight;
     }
 
 
@@ -95,8 +102,11 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         if (Input.GetKey(KeyCode.D))
             data.direction += Vector3.right;
         
-        data.buttons.Set(NetworkInputData.mouseButton0, _mouseButton0);
-        _mouseButton0 = false;
+        data.buttons.Set(NetworkInputData.mouseButtonLeft, _mouseButtonLeft);
+        _mouseButtonLeft = false;
+        
+        data.buttons.Set(NetworkInputData.mouseButtonRight, _mouseButtonRight);
+        _mouseButtonRight = false;
         
         input.Set(data);
     }
