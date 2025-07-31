@@ -12,7 +12,9 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     private NetworkRunner _runner;
     [SerializeField] private NetworkPrefabRef _playerPrefab;
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
-
+    private bool _mouseButton0;
+    
+    
     async void StartGame(GameMode mode)
     {
         if(_runner == null)
@@ -32,8 +34,13 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
         });
     }
-    
-    
+
+    private void Update()
+    {
+        _mouseButton0 = Input.GetMouseButton(0) || _mouseButton0;
+    }
+
+
     private void OnGUI()
     {
         if (_runner == null)
@@ -61,6 +68,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         }
     }
 
+    
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
         if (_spawnedCharacters.TryGetValue(player, out NetworkObject networkObject))
@@ -86,7 +94,10 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
         if (Input.GetKey(KeyCode.D))
             data.direction += Vector3.right;
-
+        
+        data.buttons.Set(NetworkInputData.mouseButton0, _mouseButton0);
+        _mouseButton0 = false;
+        
         input.Set(data);
     }
     

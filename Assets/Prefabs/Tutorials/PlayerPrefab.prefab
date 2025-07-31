@@ -115,6 +115,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterController: {fileID: 8227653392878624623}
+  _prefabBall: {fileID: 9205237665938122297, guid: 9ff0613816ae05d43b8e789f459c5218, type: 3}
   _animator: {fileID: 5054836514599026333}
 --- !u!114 &3126228975475584327
 MonoBehaviour:
