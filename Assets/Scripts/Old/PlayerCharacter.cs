@@ -123,17 +123,7 @@ public class PlayerCharacter : NetworkBehaviour
     }
     
     
-    /*public void StateAuthorityChanged()
-    {
-        Debug.Log("StateAuthorityChanged called for PlayerCharacter");
-        bool isMine = HasStateAuthority;
 
-        if (playerInput != null)
-            playerInput.enabled = isMine;
-
-        if (cameraTransform != null)
-            cameraTransform.gameObject.SetActive(isMine);
-    }*/
 }
 
 
