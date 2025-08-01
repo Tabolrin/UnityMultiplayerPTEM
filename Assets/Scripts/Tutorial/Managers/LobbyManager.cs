@@ -1,0 +1,381 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Fusion;
+using Fusion.Addons.Physics;
+using Fusion.Sockets;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+using Unity.Multiplayer;
+using Unity.VisualScripting;
+using UnityEngine.SceneManagement;
+
+
+struct PlayerData
+{
+    public string playerId; 
+    public string playerName;
+    public Color playerColor;
+}
+
+public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
+{
+    public const string GAME_SCENE_NAME = "EnderArena";
+
+    //private NetworkRunner _runner;
+    
+    //Relevant Instances
+    //public static LobbyManager Instance;
+    
+    const string EndersLobby = "Ender's";
+    const string MoxieLobby = "Moxie's";
+    const string BillsLobby = "Bill's";
+
+    private string currentLobby;
+    
+    List<GameObject> playersTextBoxes = new List<GameObject>();
+
+
+    [Header("Critical Dependencies")] 
+    [SerializeField] private GameObject networkRunnerPrefab;
+    [SerializeField] NetworkRunner _runner;
+    [SerializeField] private GameObject sessionButtonPrefab;
+    [SerializeField] private SceneManager sceneManager;
+    
+    [Header("Panels")]
+    [SerializeField] private GameObject sessionListPanel;
+    [SerializeField] private GameObject Lobbies;
+    [SerializeField] private GameObject MidSessionPanel;
+    [SerializeField] private GameObject SessionButtonLocations;
+    [SerializeField] private GameObject newSessionPanel;
+    [SerializeField] private GameObject lockedSessionPanel;
+    //[SerializeField] private GameObject playerNamesListPanel;
+
+    [Header("Buttons")]
+    [SerializeField] private Button[] lobbyButtons;
+    [SerializeField] private Button startSessionButton;
+    [SerializeField] private Button startGameButton;
+    List<Button> existingSessionButtons = new List<Button>();
+    
+    [Header("Player Id's")]
+    [SerializeField] private TMP_Text[] playerNamesTexts;
+    
+    
+    [Header("New Session Input")]
+    [SerializeField] private TMP_InputField newSessionNameInput;
+    [SerializeField] private TMP_InputField numberOfPlayersInput;
+    [SerializeField] private Toggle publicSessionToggle;
+
+
+    private void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+        _runner.AddCallbacks(this);
+        //Instance = this;
+    }
+    
+    
+    async Task<StartGameResult> StartGameTutorial(GameMode mode, string SessionNameInput)
+    {
+        //RunnerNullCheck();
+        
+        StartGameResult resTask;
+        
+        if (mode == GameMode.Host)
+        {
+            resTask = await _runner.StartGame(new StartGameArgs()
+           {
+               GameMode = mode,
+               SessionName = SessionNameInput,
+               PlayerCount = int.Parse(numberOfPlayersInput.text),
+               CustomLobbyName = _runner.LobbyInfo.Name,
+               IsVisible = publicSessionToggle.isOn
+           }); 
+        }
+        else
+        {
+            resTask = await _runner.StartGame(new StartGameArgs()
+            {
+                GameMode = mode,
+                SessionName = SessionNameInput,
+                CustomLobbyName = _runner.LobbyInfo.Name,
+                IsVisible = publicSessionToggle.isOn
+            });
+        }
+
+        return resTask;
+    }
+    
+    
+    public async void StartSession()
+    {
+        if (string.IsNullOrEmpty(newSessionNameInput.text) || string.IsNullOrEmpty(numberOfPlayersInput.text))
+            return;
+
+        ToggleButtonInteractivity(startSessionButton);
+        
+        StartGameResult resTask = await StartGameTutorial(GameMode.Host, newSessionNameInput.text);
+
+        if (resTask.Ok)
+        {
+            TogglePanelVisibility(newSessionPanel);
+            OnGameStarted(_runner);
+        }
+        else
+        {
+            Debug.LogError($"Game start failed: {resTask.ShutdownReason}");
+            ToggleButtonInteractivity(startSessionButton);
+        }
+    }
+    
+    
+    public async void JoinSession(string sessionName)
+    {
+        ToggleButtonInteractivity(existingSessionButtons);
+        
+        StartGameResult resTask = await StartGameTutorial(GameMode.Client, sessionName);
+        
+        if (resTask.Ok)
+        {
+            OnGameStarted(_runner);
+        }
+        else
+        {
+            if (resTask.ShutdownReason == ShutdownReason.GameIsFull)
+                lockedSessionPanel.SetActive(true);
+            
+            ResetNetworkRunner();
+            
+            ToggleButtonInteractivity(existingSessionButtons);
+            Debug.LogError($"Game start failed: {resTask.ShutdownReason}");
+        }
+    }
+    
+    
+    private void ResetNetworkRunner()
+    {
+        _runner = Instantiate(networkRunnerPrefab).GetComponent<NetworkRunner>();
+    }
+    
+    
+    public async void JoinLobby(string lobbyName)
+    {
+        //RunnerNullCheck();
+        
+        StartGameResult result = await _runner.JoinSessionLobby(SessionLobby.Custom, lobbyName);
+        
+        if (result.Ok)
+        {
+            TogglePanelVisibility(Lobbies);
+            TogglePanelVisibility(sessionListPanel);
+            Debug.Log("Joined Lobby!" + lobbyName);
+            currentLobby = lobbyName;
+        }
+        else
+        {
+            Debug.LogError($"Game join failed: {result.ShutdownReason}");
+            ToggleButtonInteractivity(lobbyButtons);
+        }
+    }
+    
+    
+    public void TogglePanelVisibility(GameObject panel)
+    {
+        if (panel)
+        {
+            panel.SetActive(!panel.activeSelf);
+        }
+        else
+        {
+            Debug.LogWarning("Panel is not assigned.");
+        }
+    }
+    
+    
+    public void ToggleButtonInteractivity(Button button)
+    {
+        if (button)
+            button.interactable = !button.interactable;
+        else
+            Debug.LogWarning("Button is not assigned");
+    }
+    
+    
+    public void ToggleButtonInteractivity(Button[] buttons)
+    {
+        if (buttons != null)
+            foreach (Button button in buttons)
+                ToggleButtonInteractivity(button);
+        else
+            Debug.LogWarning("Button is not assigned");
+    }
+    
+    
+    public void ToggleButtonInteractivity(List<Button> buttons)
+    {
+        if (buttons != null)
+            foreach (Button button in buttons)
+                ToggleButtonInteractivity(button);
+        else
+            Debug.LogWarning("Button is not assigned");
+    }
+
+    
+    private void OnGameStarted(NetworkRunner obj)
+    {
+        Debug.Log("Game Started");
+        
+        TogglePanelVisibility(sessionListPanel);
+        TogglePanelVisibility(MidSessionPanel);
+        
+        if(_runner.IsServer)
+            startGameButton.gameObject.SetActive(true);
+    }
+    
+    
+    public void MoveToGameScene()
+    {
+        if (_runner != null && _runner.IsRunning)
+        {
+            _runner.SessionInfo.IsOpen = false;
+            sceneManager.OnlineMoveToScene(GAME_SCENE_NAME);
+        }
+        else
+        {
+            Debug.LogWarning("NetworkRunner is not running or not assigned.");
+        }
+    }
+    
+    
+    public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
+    {
+        foreach (var textBox in playersTextBoxes)
+            Destroy(textBox);
+
+        playersTextBoxes.Clear();
+        
+        
+        foreach (var session in existingSessionButtons) 
+                    Destroy(session.gameObject);
+        
+        existingSessionButtons.Clear();
+        
+        foreach (var session in sessionList)
+        {
+            if(!session.IsVisible)
+                continue;
+            
+            Debug.Log(session.Name);
+            GameObject newSessionButton = Instantiate(sessionButtonPrefab, SessionButtonLocations.transform);
+            ButtonTextRefHolder newButton = newSessionButton.GetComponent<ButtonTextRefHolder>();
+
+            newButton.SessionName = session.Name;
+            newButton.buttonText.text = "Room name: " + session.Name + "\nPlayers Count: " + session.PlayerCount;
+            
+            newButton.onButtonClick.AddListener(JoinSession);
+
+            existingSessionButtons.Add(newButton.thisButton);
+        }
+    }
+    
+    public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
+    {
+        Debug.Log("Player Joined: " + player);
+        UpdatePlayersList();
+    }
+
+    public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
+    {
+        Debug.Log("Player Left: " + player);
+        UpdatePlayersList();
+    }
+
+    public void UpdatePlayersList()
+    {
+        List<PlayerRef> players = _runner.ActivePlayers.ToList();
+        
+        for(int i = 0; i < playerNamesTexts.Length; ++i)
+        {
+            if(i >= players.Count())
+            {
+                playerNamesTexts[i].text = "";
+            }
+            else
+            {
+                playerNamesTexts[i].text = players[i].PlayerId.ToString();
+            }
+        }
+    }
+
+    public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
+    {
+        Debug.Log("Runner Shut Down, Reason: " + shutdownReason);
+    }
+    
+    
+    #region UnusedCallbacks
+    
+    public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
+    {
+    }
+
+    public void OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
+    {
+    }
+
+    
+    public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
+    {
+    }
+
+    public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token)
+    {
+    }
+
+    public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason)
+    {
+    }
+
+    public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)
+    {
+    }
+
+    public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ReliableKey key, ArraySegment<byte> data)
+    {
+    }
+
+    public void OnReliableDataProgress(NetworkRunner runner, PlayerRef player, ReliableKey key, float progress)
+    {
+    }
+
+    public void OnInput(NetworkRunner runner, NetworkInput input)
+    {
+    }
+
+    public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input)
+    {
+    }
+
+    public void OnConnectedToServer(NetworkRunner runner)
+    {
+    }
+
+    public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data)
+    {
+    }
+
+    public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken)
+    {
+    }
+
+    public void OnSceneLoadDone(NetworkRunner runner)
+    {
+    }
+
+    public void OnSceneLoadStart(NetworkRunner runner)
+    {
+    }
+    #endregion
+}

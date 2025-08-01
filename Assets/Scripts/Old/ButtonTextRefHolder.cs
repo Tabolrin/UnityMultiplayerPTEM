@@ -5,14 +5,14 @@ using UnityEngine.UI;
 
 public class ButtonTextRefHolder : MonoBehaviour
 {
+    public string SessionName;
     public TMP_Text buttonText;
     public Button thisButton;
     
-    public UnityEvent<TMP_Text> onButtonClick;
+    public UnityEvent<string> onButtonClick;
     
     public void InvokeButtonClickEvent()
     {
-        Debug.Log("weeeee");
-        onButtonClick.Invoke(buttonText);
+        onButtonClick.Invoke(SessionName);
     }
 }

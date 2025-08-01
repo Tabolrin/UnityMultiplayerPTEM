@@ -6,11 +6,11 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Lobby.unity
-    guid: 968aa0bfb0b8d1446a9dc67273265d0e
+    path: Assets/Scenes/New/FinalLobby.unity
+    guid: e1933e263c1507d4fb691393b5750f8e
   - enabled: 1
-    path: Assets/Scenes/OldGame.unity
-    guid: e95ae64291c2f2543be5d982cb85391c
+    path: Assets/Scenes/New/EnderArena.unity
+    guid: eae9e4251e63a554b8447f681c3ac9de
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 0cb5daa49acb1a140a7a44f051629aa0, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
