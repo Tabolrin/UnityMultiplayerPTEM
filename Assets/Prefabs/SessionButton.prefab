@@ -284,6 +284,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1448ffd31ceb53d43ba604d9cd75e775, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SessionName: 
   buttonText: {fileID: 1981038349852209635}
   thisButton: {fileID: 7336357046992008579}
   onButtonClick:

@@ -19,7 +19,8 @@ public class SceneManager : MonoBehaviour
         else
             Debug.Log("NetworkRunner initialized successfully.");
         
-        runner.LoadScene(sceneName);
+        if(runner.IsServer)
+            runner.LoadScene(sceneName);
     }
     
     public void OfflineMoveToScene(string sceneName)

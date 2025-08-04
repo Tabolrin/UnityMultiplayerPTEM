@@ -16,11 +16,14 @@ public class PlayerCharacter : NetworkBehaviour
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private Camera localCamera;
     [SerializeField] private  ParticleSystem particleSystem;
+    
 
     [Header("Player Settings")]
     [Networked, OnChangedRender(nameof(HpChanged))][field:SerializeField]
     public int HP { get; set; }
     [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private int TeamId = 0; 
+
 
     [Header("Camera Orbit Settings")]
     [SerializeField] private float orbitSpeed = 15;
@@ -30,6 +33,7 @@ public class PlayerCharacter : NetworkBehaviour
 
     public override void Spawned()
     {
+        gameObject.tag = PLAYER_TAG;
         //StateAuthorityChanged();
     }
 
