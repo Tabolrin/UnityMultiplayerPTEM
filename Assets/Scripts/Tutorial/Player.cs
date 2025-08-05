@@ -5,20 +5,23 @@ using UnityEngine;
 public class Player : NetworkBehaviour
 {
     [SerializeField] private NetworkCharacterController characterController;
-    [SerializeField] private Ball _prefabBall;
-    [SerializeField] private PhysXBall _prefabPhysXBall;
-    [SerializeField] private Material _material;
+    [SerializeField] private SkinnedMeshRenderer _playerMeshRenderer;
     [SerializeField] private Animator _animator;
+    [SerializeField] private PlayerMaterialsContainer _materialsContainer;
     
-    [Networked]
-    public bool spawnedProjectile { get; set; }
+
     [Networked] private TickTimer _delay { get; set; }
     private Vector3 _forward;
-    private bool _youShallChangeCOLOR = false;
 
     public override void Spawned()
     {
-        
+    }
+    
+    public void SetMaterial(Material material)
+    {
+        if (!Runner.IsServer) return;
+
+        _playerMeshRenderer.material = material;
     }
 
     
@@ -37,43 +40,14 @@ public class Player : NetworkBehaviour
                 if (data.buttons.IsSet(NetworkInputData.mouseButtonLeft))
                 {
                     _delay = TickTimer.CreateFromSeconds(Runner, 0.5f);
-                    Runner.Spawn(_prefabBall,
-                        transform.position+_forward,
-                        Quaternion.LookRotation(_forward),
-                        Object.InputAuthority,
-                        (runner, o) =>
-                        {
-                            // Initialize the Ball before synchronizing it
-                            o.GetComponent<Ball>().Init();
-                            _youShallChangeCOLOR = true;
-                        });
+                   
                 }
                 else if (data.buttons.IsSet(NetworkInputData.mouseButtonRight))
                 {
                     _delay = TickTimer.CreateFromSeconds(Runner, 0.5f);
-                    Runner.Spawn
-                    (
-                        _prefabPhysXBall,
-                        transform.position+_forward,
-                        Quaternion.LookRotation(_forward),
-                        Object.InputAuthority,
-                        (runner, o) =>
-                        {
-                            o.GetComponent<PhysXBall>().Init( 10*_forward );
-                        }
-                    );
                 }
             }
         }
     }
-    
-    public override void Render()
-    {
-        if (_youShallChangeCOLOR)
-        {
-            _material.color = Color.white;
-            _youShallChangeCOLOR = false;
-        }
-        _material.color = Color.Lerp(_material.color, Color.blue, Time.deltaTime);
-    }
+
 }

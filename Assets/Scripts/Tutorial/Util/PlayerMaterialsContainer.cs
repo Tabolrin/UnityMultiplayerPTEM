@@ -4,13 +4,12 @@ using UnityEngine;
 public class PlayerMaterialsContainer : ScriptableObject
 {
     [SerializeField] private Material blackMaterial;
-    [SerializeField] private Material redMaterial;
-    [SerializeField] private Material blueMaterial;
-    [SerializeField] private Material greenMaterial;
-    [SerializeField] private Material yellowMaterial;
-    [SerializeField] private Material purpleMaterial;
     [SerializeField] private Material orangeMaterial;
-    [SerializeField] private Material whiteMaterial;
-    [SerializeField] private Material grayMaterial;
+    [SerializeField] private Material greenMaterial;
+    [SerializeField] private Material blueMaterial;
+    [SerializeField] private Material redMaterial;
     [SerializeField] private Material pinkMaterial;
+    [SerializeField] private Material yellowMaterial;
+    [SerializeField] private Material whiteMaterial;
+    [SerializeField] private Material greyMaterial;
 }
