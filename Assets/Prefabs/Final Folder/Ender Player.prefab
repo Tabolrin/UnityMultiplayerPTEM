@@ -116,8 +116,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCamera: {fileID: 4514370231765772886}
   model: {fileID: 2566801065024360686}
+  meshRenderer: {fileID: 91093010925416268}
+  matContainer: {fileID: 11400000, guid: 5cba5461411a99a4ab21e8c87127c327, type: 2}
   rb: {fileID: 5858031609716288586}
-  playerStats: {fileID: 11400000, guid: 94675f2a9fa146c49be54b5e037bec39, type: 2}
 --- !u!114 &7311543790441012144
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163,7 +164,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 1
 --- !u!114 &8252267017421782496
 MonoBehaviour:
@@ -180,7 +181,7 @@ MonoBehaviour:
   _stateAuthorityChangeErrorCorrectionDelta: 0
   SyncScale: 0
   SyncParent: 0
-  _interpolationTarget: {fileID: 2942200020422576724}
+  _interpolationTarget: {fileID: 0}
   UsePreciseRotation: 0
   UseRenderSleepThresholds: 1
   RenderThresholds:
@@ -206,7 +207,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &891971152427053591
 Transform:
   m_ObjectHideFlags: 0
@@ -379,13 +380,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: fdcc2ea0b4a59d44ebb86899c1f72c78, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fdcc2ea0b4a59d44ebb86899c1f72c78, type: 3}
+--- !u!137 &91093010925416268 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 3323043777591427827, guid: fdcc2ea0b4a59d44ebb86899c1f72c78, type: 3}
+  m_PrefabInstance: {fileID: 3413291092271050175}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2566801065024360686 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: fdcc2ea0b4a59d44ebb86899c1f72c78, type: 3}

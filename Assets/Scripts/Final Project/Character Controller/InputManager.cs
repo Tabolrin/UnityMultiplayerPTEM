@@ -29,12 +29,15 @@ public class InputManager : MonoBehaviour
     {
         EnderInputData enderData = new EnderInputData();
         enderData.LookRotation = _lookDirection;
-        input.Set(enderData);
+        
         if (shouldInputMove)
         {
             shouldInputMove = false;
             enderData.velocity = movement;
+            enderData.buttons.Set(ButtonDefenitions.Move, true);
         }
+
+        input.Set(enderData);
     }
 
     //proccess the input between ticks
@@ -58,7 +61,7 @@ public class InputManager : MonoBehaviour
     }
     public void OnMove(InputAction.CallbackContext inputContext) 
     {
-        movement = _lookDirection.eulerAngles.normalized * playerStats.MoveSpeed;
+        movement = _lookDirection * Vector3.forward * playerStats.MoveSpeed;
         shouldInputMove = true;
     }
 }

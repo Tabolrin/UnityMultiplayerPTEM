@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a539b270beb563f4b90cacc60813e6eb, type: 3}
   m_Name: MaterialsContainer
   m_EditorClassIdentifier: 
-  blackMaterial: {fileID: 0}
-  redMaterial: {fileID: 0}
-  blueMaterial: {fileID: 0}
-  greenMaterial: {fileID: 0}
-  yellowMaterial: {fileID: 0}
+  blackMaterial: {fileID: 2100000, guid: 054e491f3470d7c42ad09e8a6dde672e, type: 2}
+  redMaterial: {fileID: 2100000, guid: 74288600bb4e66e4b8f0c71837b81cea, type: 2}
+  blueMaterial: {fileID: 2100000, guid: 56268e2d9677e5b4bab194d129e7a076, type: 2}
+  greenMaterial: {fileID: 2100000, guid: 2c7abe43a6212e548b96df7a705d99d8, type: 2}
+  yellowMaterial: {fileID: 2100000, guid: 17d43ed8f0483034f9ff9c3a95725803, type: 2}
   purpleMaterial: {fileID: 0}
-  orangeMaterial: {fileID: 0}
-  whiteMaterial: {fileID: 0}
-  grayMaterial: {fileID: 0}
-  pinkMaterial: {fileID: 0}
+  orangeMaterial: {fileID: 2100000, guid: 33a4e7a4deafe124f8a65211c64c0054, type: 2}
+  whiteMaterial: {fileID: 2100000, guid: 2f7e3561dbab9ac4aaa9e1292e13782d, type: 2}
+  grayMaterial: {fileID: 5702159569459833656, guid: fdcc2ea0b4a59d44ebb86899c1f72c78, type: 3}
+  pinkMaterial: {fileID: 2100000, guid: 2a52c8f3cb5e2ce4eb819f76e1d200f7, type: 2}
