@@ -181,8 +181,8 @@ GameObject:
   - component: {fileID: 4440148550366644164}
   - component: {fileID: 1339794000297067758}
   - component: {fileID: 4189257176447214675}
-  - component: {fileID: 2857918515287628794}
   - component: {fileID: 539515467915083139}
+  - component: {fileID: 3742111746412082920}
   m_Layer: 0
   m_Name: AstroPlayerPrefab
   m_TagString: Player
@@ -235,7 +235,7 @@ MonoBehaviour:
   m_ActionEvents:
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2857918515287628794}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PlayerCharacter, Assembly-CSharp
         m_MethodName: OnMove
         m_Mode: 0
@@ -252,7 +252,7 @@ MonoBehaviour:
       ROG CHAKRAM/stick,/1532-244/stick]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2857918515287628794}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PlayerCharacter, Assembly-CSharp
         m_MethodName: OnLook
         m_Mode: 0
@@ -268,7 +268,7 @@ MonoBehaviour:
     m_ActionName: 'Player/Look[/Mouse/delta]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2857918515287628794}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PlayerCharacter, Assembly-CSharp
         m_MethodName: OnAttack
         m_Mode: 0
@@ -400,34 +400,10 @@ MonoBehaviour:
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 2857918515287628794}
   - {fileID: 539515467915083139}
+  - {fileID: 3742111746412082920}
   - {fileID: 5438051965889030427}
   ForceRemoteRenderTimeframe: 0
---- !u!114 &2857918515287628794
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1452581237047588246}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6230ecb3a6164aa438b4973f898f3c1c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rb: {fileID: 1339794000297067758}
-  projectileSpawnPoint: {fileID: 335093778401368820}
-  jerryProjectilePrefab: {fileID: 8766717296039276825, guid: 32986cfaa8b474549a550d35c131fa4a, type: 3}
-  animator: {fileID: 1838181151920733667}
-  cameraTransform: {fileID: 6357553498913823554}
-  Model: {fileID: 4911584948286143779}
-  playerInput: {fileID: 8520905411159703496}
-  localCamera: {fileID: 3647293369346488355}
-  particleSystem: {fileID: 49946419693405499}
-  _HP: 100
-  moveSpeed: 20
-  orbitSpeed: 0.8
 --- !u!114 &539515467915083139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -451,6 +427,25 @@ MonoBehaviour:
     Position: 0.01
     Rotation: 0.01
     Scale: 0.01
+--- !u!114 &3742111746412082920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1452581237047588246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6ea5c0d2f28336499976d3b13962a1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterController: {fileID: 0}
+  _prefabBall: {fileID: 0}
+  _playerMeshRenderer: {fileID: 7419063665743479425}
+  _prefabPhysXBall: {fileID: 0}
+  _animator: {fileID: 1838181151920733667}
+  _materialsContainer: {fileID: 11400000, guid: 5cba5461411a99a4ab21e8c87127c327, type: 2}
+  _spawnedProjectile: 0
 --- !u!1 &4905763983431155786
 GameObject:
   m_ObjectHideFlags: 0
@@ -5486,5 +5481,10 @@ Transform:
 --- !u!4 &6698841149980506160 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5485170644153392923, guid: 595fe578d5abb5044a32147cfee65c03, type: 3}
+  m_PrefabInstance: {fileID: 1218273362152957739}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &7419063665743479425 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 8511207581968459178, guid: 595fe578d5abb5044a32147cfee65c03, type: 3}
   m_PrefabInstance: {fileID: 1218273362152957739}
   m_PrefabAsset: {fileID: 0}
