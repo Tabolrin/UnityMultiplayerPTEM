@@ -51,6 +51,8 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     [SerializeField] private GameObject SessionButtonLocations;
     [SerializeField] private GameObject newSessionPanel;
     [SerializeField] private GameObject lockedSessionPanel;
+    [SerializeField] private GameObject notificationPanel;
+    [SerializeField] private TMP_Text notificationPanelText;
     //[SerializeField] private GameObject playerNamesListPanel;
 
     [Header("Buttons")]
@@ -67,6 +69,12 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     [SerializeField] private TMP_InputField newSessionNameInput;
     [SerializeField] private TMP_InputField numberOfPlayersInput;
     [SerializeField] private Toggle publicSessionToggle;
+    
+    [Header("New session restriction settings")]
+    [SerializeField] private int minimumPlayers = 4;
+    [SerializeField] private int maximumPlayers = 8;
+
+
 
 
     private void Awake()
@@ -113,6 +121,14 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     {
         if (string.IsNullOrEmpty(newSessionNameInput.text) || string.IsNullOrEmpty(numberOfPlayersInput.text))
             return;
+        
+        if(int.Parse(numberOfPlayersInput.text) > maximumPlayers)
+        {
+            Debug.LogError($"Number of players exceeds maximum limit of {maximumPlayers}");
+            notificationPanelText.text = $"Number of players exceeds maximum limit of {maximumPlayers}";
+            TogglePanelVisibility(notificationPanel);
+            return;
+        }
 
         ToggleButtonInteractivity(startSessionButton);
         
@@ -162,8 +178,6 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     
     public async void JoinLobby(string lobbyName)
     {
-        //RunnerNullCheck();
-        
         StartGameResult result = await _runner.JoinSessionLobby(SessionLobby.Custom, lobbyName);
         
         if (result.Ok)
@@ -237,6 +251,14 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     
     public void MoveToGameScene()
     {
+        if (_runner.ActivePlayers.Count() < minimumPlayers)
+        {
+            Debug.LogWarning($"Not enough players to start the game. Minimum required: {minimumPlayers}");
+            notificationPanelText.text = $"Not enough players to start the game. Minimum required: {minimumPlayers}";
+            TogglePanelVisibility(notificationPanel);
+            return;
+        }
+        
         if (_runner != null && _runner.IsRunning)
         {
             _runner.SessionInfo.IsOpen = false;
