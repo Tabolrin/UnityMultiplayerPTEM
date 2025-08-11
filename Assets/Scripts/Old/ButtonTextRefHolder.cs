@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -9,10 +10,23 @@ public class ButtonTextRefHolder : MonoBehaviour
     public TMP_Text buttonText;
     public Button thisButton;
     
-    public UnityEvent<string> onButtonClick;
-    
-    public void InvokeButtonClickEvent()
+    private LobbyManager lobbyManager;
+    public UnityEvent AddPlayerToDictionary;
+    public UnityEvent<string> JoinGame;
+
+    private void Awake()
     {
-        onButtonClick.Invoke(SessionName);
+        lobbyManager = FindFirstObjectByType<LobbyManager>();
+        lobbyManager.JoinLobbyEvent.AddListener(InvokeJoinGame);
+    }
+
+    public void InvokeAddPlayerToDictionary()
+    {
+        AddPlayerToDictionary.Invoke();
+    }
+
+    public void InvokeJoinGame()
+    {
+        JoinGame.Invoke(SessionName);
     }
 }
