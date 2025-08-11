@@ -43,8 +43,10 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     [SerializeField] NetworkRunner _runner;
     [SerializeField] private GameObject sessionButtonPrefab;
     [SerializeField] private SceneManager sceneManager;
+    [SerializeField] private UiNotificationTexts uiNotificationTexts;
     
     [Header("Panels")]
+    [SerializeField] private CanvasGroup GenaralCanvasGroup;
     [SerializeField] private GameObject sessionListPanel;
     [SerializeField] private GameObject Lobbies;
     [SerializeField] private GameObject MidSessionPanel;
@@ -64,7 +66,6 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     [Header("Player Id's")]
     [SerializeField] private TMP_Text[] playerNamesTexts;
     
-    
     [Header("New Session Input")]
     [SerializeField] private TMP_InputField newSessionNameInput;
     [SerializeField] private TMP_InputField numberOfPlayersInput;
@@ -73,9 +74,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     [Header("New session restriction settings")]
     [SerializeField] private int minimumPlayers = 4;
     [SerializeField] private int maximumPlayers = 8;
-
-
-
+    
 
     private void Awake()
     {
@@ -124,8 +123,15 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         
         if(int.Parse(numberOfPlayersInput.text) > maximumPlayers)
         {
-            Debug.LogError($"Number of players exceeds maximum limit of {maximumPlayers}");
-            notificationPanelText.text = $"Number of players exceeds maximum limit of {maximumPlayers}";
+            Debug.LogError(uiNotificationTexts.MaximalPlayerCountExceeded);
+            notificationPanelText.text = uiNotificationTexts.MaximalPlayerCountExceeded;
+            TogglePanelVisibility(notificationPanel);
+            return;
+        }
+        if(int.Parse(numberOfPlayersInput.text) < minimumPlayers)
+        {
+            Debug.LogError(uiNotificationTexts.MinimalPlayerCountNotReached);
+            notificationPanelText.text = uiNotificationTexts.MinimalPlayerCountNotReached;
             TogglePanelVisibility(notificationPanel);
             return;
         }
@@ -160,7 +166,10 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         else
         {
             if (resTask.ShutdownReason == ShutdownReason.GameIsFull)
-                lockedSessionPanel.SetActive(true);
+            {
+                notificationPanelText.text = uiNotificationTexts.LockedSession;
+                TogglePanelVisibility(notificationPanel);
+            }
             
             ResetNetworkRunner();
             
@@ -197,8 +206,12 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     
     public void TogglePanelVisibility(GameObject panel)
     {
+        
         if (panel)
         {
+            if(panel == notificationPanel)
+                GenaralCanvasGroup.interactable = !GenaralCanvasGroup.interactable;
+                 
             panel.SetActive(!panel.activeSelf);
         }
         else
