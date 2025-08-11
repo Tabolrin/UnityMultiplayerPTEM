@@ -24,8 +24,11 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     [SerializeField] private GameObject killGameButton;
     [SerializeField] private GameObject killGamePanel;
     [SerializeField] private SceneManager sceneManager;
-    
-    
+
+    public static event Action OnRoundOver;
+    public static event Action OnRoundStarted;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
