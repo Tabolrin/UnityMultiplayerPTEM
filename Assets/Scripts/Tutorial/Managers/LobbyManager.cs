@@ -11,6 +11,7 @@ using UnityEngine.UI;
 using Unity.Multiplayer;
 using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
+using WebSocketSharp;
 
 
 struct PlayerData
@@ -36,6 +37,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     private string currentLobby;
     
     List<GameObject> playersTextBoxes = new List<GameObject>();
+    private List<SessionInfo> sessionList = new List<SessionInfo>();
 
 
     [Header("Critical Dependencies")] 
@@ -56,7 +58,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     [SerializeField] private GameObject notificationPanel;
     [SerializeField] private TMP_Text notificationPanelText;
     //[SerializeField] private GameObject playerNamesListPanel;
-
+    
     [Header("Buttons")]
     [SerializeField] private Button[] lobbyButtons;
     [SerializeField] private Button startSessionButton;
@@ -86,7 +88,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     
     async Task<StartGameResult> StartGameTutorial(GameMode mode, string SessionNameInput)
     {
-        //RunnerNullCheck();
+        //RunnerNullCheck(); TODO: delete if unneeded
         
         StartGameResult resTask;
         
@@ -121,18 +123,30 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         if (string.IsNullOrEmpty(newSessionNameInput.text) || string.IsNullOrEmpty(numberOfPlayersInput.text))
             return;
         
-        if(int.Parse(numberOfPlayersInput.text) > maximumPlayers)
+        if (newSessionNameInput.text.IsNullOrEmpty())
         {
-            Debug.LogError(uiNotificationTexts.MaximalPlayerCountExceeded);
-            notificationPanelText.text = uiNotificationTexts.MaximalPlayerCountExceeded;
-            TogglePanelVisibility(notificationPanel);
+            SessionValidationError(uiNotificationTexts.InvalidSessionName);
             return;
         }
+        
+        foreach (SessionInfo session in sessionList)
+        {
+            if (session.Name == newSessionNameInput.text)
+            {
+                SessionValidationError(uiNotificationTexts.SessionNameAlreadyExists);
+                return;
+            }
+        }
+        
+        if(int.Parse(numberOfPlayersInput.text) > maximumPlayers)
+        {
+            SessionValidationError(uiNotificationTexts.MaximalPlayerCountExceeded);
+            return;
+        }
+        
         if(int.Parse(numberOfPlayersInput.text) < minimumPlayers)
         {
-            Debug.LogError(uiNotificationTexts.MinimalPlayerCountNotReached);
-            notificationPanelText.text = uiNotificationTexts.MinimalPlayerCountNotReached;
-            TogglePanelVisibility(notificationPanel);
+            SessionValidationError(uiNotificationTexts.MinimalPlayerCountNotReached);
             return;
         }
 
@@ -148,8 +162,16 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         else
         {
             Debug.LogError($"Game start failed: {resTask.ShutdownReason}");
+            SessionValidationError(uiNotificationTexts.FailedToStartSession);
             ToggleButtonInteractivity(startSessionButton);
         }
+    }
+    
+    private void SessionValidationError(string errorMessage)
+    {
+        Debug.LogError(errorMessage);
+        notificationPanelText.text = errorMessage;
+        TogglePanelVisibility(notificationPanel);
     }
     
     
@@ -167,7 +189,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         {
             if (resTask.ShutdownReason == ShutdownReason.GameIsFull)
             {
-                notificationPanelText.text = uiNotificationTexts.LockedSession;
+                notificationPanelText.text = uiNotificationTexts.SessionFull;
                 TogglePanelVisibility(notificationPanel);
             }
             
@@ -286,6 +308,8 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     
     public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
     {
+        this.sessionList = sessionList;
+        
         foreach (var textBox in playersTextBoxes)
             Destroy(textBox);
 

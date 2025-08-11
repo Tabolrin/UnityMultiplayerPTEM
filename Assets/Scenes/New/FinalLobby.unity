@@ -1288,6 +1288,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6895641895869857861, guid: ccd62d0c021628544ad33f5c6a1aaf9f, type: 3}
+      propertyPath: m_Name
+      value: SessionCreationSetting
+      objectReference: {fileID: 0}
     - target: {fileID: 7463596573820784712, guid: ccd62d0c021628544ad33f5c6a1aaf9f, type: 3}
       propertyPath: m_Pivot.x
       value: 0

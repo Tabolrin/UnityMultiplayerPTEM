@@ -12,8 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b72f28553deb054681b28470c750a89, type: 3}
   m_Name: UiNotificationTexts
   m_EditorClassIdentifier: 
-  <LockedSession>k__BackingField: This session is full!
+  <SessionFull>k__BackingField: Session is full!
   <MinimalPlayerCountNotReached>k__BackingField: Number of players is below the minimal
     amount!
   <MaximalPlayerCountExceeded>k__BackingField: Number of players exceeds the maximal
     amount!
+  <InvalidSessionName>k__BackingField: Room name cannot be empty!
+  <SessionNameAlreadyExists>k__BackingField: Room name already exists!
+  <FailedToStartSession>k__BackingField: Failed to create room
