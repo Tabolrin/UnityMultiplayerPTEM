@@ -11,6 +11,7 @@ using UnityEngine.UI;
 using Unity.Multiplayer;
 using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
+using WebSocketSharp;
 
 
 struct PlayerData
@@ -36,6 +37,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     private string currentLobby;
     
     List<GameObject> playersTextBoxes = new List<GameObject>();
+    private List<SessionInfo> sessionList = new List<SessionInfo>();
 
 
     [Header("Critical Dependencies")] 
@@ -43,16 +45,20 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     [SerializeField] NetworkRunner _runner;
     [SerializeField] private GameObject sessionButtonPrefab;
     [SerializeField] private SceneManager sceneManager;
+    [SerializeField] private UiNotificationTexts uiNotificationTexts;
     
     [Header("Panels")]
+    [SerializeField] private CanvasGroup GenaralCanvasGroup;
     [SerializeField] private GameObject sessionListPanel;
     [SerializeField] private GameObject Lobbies;
     [SerializeField] private GameObject MidSessionPanel;
     [SerializeField] private GameObject SessionButtonLocations;
     [SerializeField] private GameObject newSessionPanel;
     [SerializeField] private GameObject lockedSessionPanel;
+    [SerializeField] private GameObject notificationPanel;
+    [SerializeField] private TMP_Text notificationPanelText;
     //[SerializeField] private GameObject playerNamesListPanel;
-
+    
     [Header("Buttons")]
     [SerializeField] private Button[] lobbyButtons;
     [SerializeField] private Button startSessionButton;
@@ -62,12 +68,15 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     [Header("Player Id's")]
     [SerializeField] private TMP_Text[] playerNamesTexts;
     
-    
     [Header("New Session Input")]
     [SerializeField] private TMP_InputField newSessionNameInput;
     [SerializeField] private TMP_InputField numberOfPlayersInput;
     [SerializeField] private Toggle publicSessionToggle;
-
+    
+    [Header("New session restriction settings")]
+    [SerializeField] private int minimumPlayers = 4;
+    [SerializeField] private int maximumPlayers = 8;
+    
 
     private void Awake()
     {
@@ -79,7 +88,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     
     async Task<StartGameResult> StartGameTutorial(GameMode mode, string SessionNameInput)
     {
-        //RunnerNullCheck();
+        //RunnerNullCheck(); TODO: delete if unneeded
         
         StartGameResult resTask;
         
@@ -113,6 +122,33 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     {
         if (string.IsNullOrEmpty(newSessionNameInput.text) || string.IsNullOrEmpty(numberOfPlayersInput.text))
             return;
+        
+        if (newSessionNameInput.text.IsNullOrEmpty())
+        {
+            SessionValidationError(uiNotificationTexts.InvalidSessionName);
+            return;
+        }
+        
+        foreach (SessionInfo session in sessionList)
+        {
+            if (session.Name == newSessionNameInput.text)
+            {
+                SessionValidationError(uiNotificationTexts.SessionNameAlreadyExists);
+                return;
+            }
+        }
+        
+        if(int.Parse(numberOfPlayersInput.text) > maximumPlayers)
+        {
+            SessionValidationError(uiNotificationTexts.MaximalPlayerCountExceeded);
+            return;
+        }
+        
+        if(int.Parse(numberOfPlayersInput.text) < minimumPlayers)
+        {
+            SessionValidationError(uiNotificationTexts.MinimalPlayerCountNotReached);
+            return;
+        }
 
         ToggleButtonInteractivity(startSessionButton);
         
@@ -126,8 +162,16 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         else
         {
             Debug.LogError($"Game start failed: {resTask.ShutdownReason}");
+            SessionValidationError(uiNotificationTexts.FailedToStartSession);
             ToggleButtonInteractivity(startSessionButton);
         }
+    }
+    
+    private void SessionValidationError(string errorMessage)
+    {
+        Debug.LogError(errorMessage);
+        notificationPanelText.text = errorMessage;
+        TogglePanelVisibility(notificationPanel);
     }
     
     
@@ -144,7 +188,10 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         else
         {
             if (resTask.ShutdownReason == ShutdownReason.GameIsFull)
-                lockedSessionPanel.SetActive(true);
+            {
+                notificationPanelText.text = uiNotificationTexts.SessionFull;
+                TogglePanelVisibility(notificationPanel);
+            }
             
             ResetNetworkRunner();
             
@@ -162,8 +209,6 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     
     public async void JoinLobby(string lobbyName)
     {
-        //RunnerNullCheck();
-        
         StartGameResult result = await _runner.JoinSessionLobby(SessionLobby.Custom, lobbyName);
         
         if (result.Ok)
@@ -183,8 +228,12 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     
     public void TogglePanelVisibility(GameObject panel)
     {
+        
         if (panel)
         {
+            if(panel == notificationPanel)
+                GenaralCanvasGroup.interactable = !GenaralCanvasGroup.interactable;
+                 
             panel.SetActive(!panel.activeSelf);
         }
         else
@@ -237,6 +286,14 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     
     public void MoveToGameScene()
     {
+        if (_runner.ActivePlayers.Count() < minimumPlayers)
+        {
+            Debug.LogWarning($"Not enough players to start the game. Minimum required: {minimumPlayers}");
+            notificationPanelText.text = $"Not enough players to start the game. Minimum required: {minimumPlayers}";
+            TogglePanelVisibility(notificationPanel);
+            return;
+        }
+        
         if (_runner != null && _runner.IsRunning)
         {
             _runner.SessionInfo.IsOpen = false;
@@ -251,6 +308,8 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     
     public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
     {
+        this.sessionList = sessionList;
+        
         foreach (var textBox in playersTextBoxes)
             Destroy(textBox);
 
