@@ -165,6 +165,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerStats: {fileID: 11400000, guid: 94675f2a9fa146c49be54b5e037bec39, type: 2}
+  Move:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &220845823
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -621,10 +624,6 @@ PrefabInstance:
     - target: {fileID: 1257292378367242733, guid: bbce01e79258026458cd3e05302f04cb, type: 3}
       propertyPath: m_Name
       value: Arena
-      objectReference: {fileID: 0}
-    - target: {fileID: 1257292378367242733, guid: bbce01e79258026458cd3e05302f04cb, type: 3}
-      propertyPath: m_TagString
-      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 6431158488620569500, guid: bbce01e79258026458cd3e05302f04cb, type: 3}
       propertyPath: m_LocalPosition.x
