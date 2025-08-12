@@ -884,6 +884,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 153680255}
     - target: {fileID: 4474589166684755622, guid: 223bc20db2604b947a761d73faf90080, type: 3}
+      propertyPath: minimumPlayers
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4474589166684755622, guid: 223bc20db2604b947a761d73faf90080, type: 3}
       propertyPath: MidSessionPanel
       value: 
       objectReference: {fileID: 1308206833}

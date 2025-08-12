@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Fusion;
 using Fusion.Sockets;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
@@ -22,8 +23,10 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     
     [SerializeField] private GameObject CharacterSelectPanel;
     [SerializeField] private GameObject killGameButton;
-    [SerializeField] private GameObject killGamePanel;
+    [SerializeField] private GameObject notificationPanel;
     [SerializeField] private SceneManager sceneManager;
+    [SerializeField] private UiNotificationTexts uiNotificationTexts;
+    [SerializeField] private TMP_Text notificatoinText;
     
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -117,10 +120,14 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     
     
     public void MasterKillGame() { RPCKillGameForAll(); }
-    
-    
+
+
     [Rpc]
-    private void RPCKillGameForAll() { killGamePanel.SetActive(true); }
+    private void RPCKillGameForAll()
+    {
+        notificatoinText.text = uiNotificationTexts.MasterKillGame;
+        notificationPanel.SetActive(true);
+    }
 
     
     public void KillGame() { runner.Shutdown(); }
