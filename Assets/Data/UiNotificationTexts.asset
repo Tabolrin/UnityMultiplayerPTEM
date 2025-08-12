@@ -20,3 +20,8 @@ MonoBehaviour:
   <InvalidSessionName>k__BackingField: Room name cannot be empty!
   <SessionNameAlreadyExists>k__BackingField: Room name already exists!
   <FailedToStartSession>k__BackingField: Failed to create room
+  <NicknameAlreadyExists>k__BackingField: Nickname already exists!
+  <NicknameEmptyOrNull>k__BackingField: Nickname cannot be empty
+  <IdAlreadyExists>k__BackingField: Unable to join room.
+  <MasterKillGame>k__BackingField: The host has closed the room. You will be returned
+    to the Lobby.

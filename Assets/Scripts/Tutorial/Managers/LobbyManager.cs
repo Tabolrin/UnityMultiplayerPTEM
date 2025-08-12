@@ -44,6 +44,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     [SerializeField] private GameObject sessionButtonPrefab;
     [SerializeField] private SceneManager sceneManager;
     [SerializeField] private UiNotificationTexts uiNotificationTexts;
+    [SerializeField] private ClientHostPrepModule hostPrep;
     
     [Header("Panels")]
     [SerializeField] private CanvasGroup GenaralCanvasGroup;
@@ -86,41 +87,33 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     {
         DontDestroyOnLoad(gameObject);
         _runner.AddCallbacks(this);
-        
-        //Instance = this;
     }
     
     
     async Task<StartGameResult> StartGameTutorial(GameMode mode, string SessionNameInput)
     {
-        //RunnerNullCheck(); TODO: delete if unneeded
-        
-        StartGameResult resTask;
-        
+        StartGameArgs args = new StartGameArgs()
+        {
+            GameMode = mode,
+            SessionName = SessionNameInput,
+            CustomLobbyName = _runner.LobbyInfo != null ? _runner.LobbyInfo.Name : null,
+            IsVisible = publicSessionToggle != null ? publicSessionToggle.isOn : true
+        };
+
         if (mode == GameMode.Host)
-        {
-            resTask = await _runner.StartGame(new StartGameArgs()
-           {
-               GameMode = mode,
-               SessionName = SessionNameInput,
-               PlayerCount = int.Parse(numberOfPlayersInput.text),
-               CustomLobbyName = _runner.LobbyInfo.Name,
-               IsVisible = publicSessionToggle.isOn
-           }); 
-        }
-        else
-        {
-            resTask = await _runner.StartGame(new StartGameArgs()
-            {
-                GameMode = mode,
-                SessionName = SessionNameInput,
-                CustomLobbyName = _runner.LobbyInfo.Name,
-                IsVisible = publicSessionToggle.isOn
-            });
-        }
+            args.PlayerCount = int.Parse(numberOfPlayersInput.text);
+
+        if (hostPrep != null)
+            hostPrep.ConfigureStartGameArgs(ref args);
+
+        StartGameResult resTask = await _runner.StartGame(args);
+
+        if (resTask.Ok && hostPrep != null)
+            hostPrep.AttachToRunner(_runner);
 
         return resTask;
     }
+
     
     
     public async void StartSession()
@@ -214,6 +207,11 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     private void ResetNetworkRunner()
     {
         _runner = Instantiate(networkRunnerPrefab).GetComponent<NetworkRunner>();
+
+        if (hostPrep != null)
+        {
+            hostPrep.AttachToRunner(_runner);
+        }
     }
     
     
@@ -310,6 +308,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         TogglePanelVisibility(PlayerRegistrationPanel);
     }
     
+    
     public void AddPlayerDataToDictionary()
     {
         foreach (var players in playersDataDict)
@@ -354,6 +353,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         
         UpdatePlayersList();
     }
+    
     
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     public void RPC_RequestAddPlayerData(PlayerData data)
@@ -455,13 +455,8 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         Debug.Log("Runner Shut Down, Reason: " + shutdownReason);
     }
     
-    public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken)
-    {
-    }
     
-    
-    
-    #region UnusedCallbacks
+    #region TheShadowRealm
     
     public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
     {
@@ -512,8 +507,10 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     {
     }
 
-
-
+    public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken)
+    {
+    }
+    
     public void OnSceneLoadDone(NetworkRunner runner)
     {
     }
