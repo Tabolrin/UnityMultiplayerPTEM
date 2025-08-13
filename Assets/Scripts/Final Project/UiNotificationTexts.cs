@@ -9,4 +9,8 @@ public class UiNotificationTexts : ScriptableObject
     [field: SerializeField] public string InvalidSessionName { get; private set; }
     [field: SerializeField] public string SessionNameAlreadyExists { get; private set; }
     [field: SerializeField] public string FailedToStartSession { get; private set; }
+    [field: SerializeField] public string NicknameAlreadyExists { get; private set; }
+    [field: SerializeField] public string NicknameEmptyOrNull { get; private set; }
+    [field: SerializeField] public string IdAlreadyExists { get; private set; }
+    [field: SerializeField] public string MasterKillGame { get; private set; }
 }

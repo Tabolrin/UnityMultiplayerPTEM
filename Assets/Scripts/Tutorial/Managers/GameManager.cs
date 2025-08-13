@@ -2,33 +2,33 @@ using System;
 using System.Collections.Generic;
 using Fusion;
 using Fusion.Sockets;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
 {
     private NetworkRunner runner;
-
-    public SpawnPoint[] team1SpawnPoints;
-    public SpawnPoint[] team2SpawnPoints;    
+    
+    public SpawnPoint[] tenPlayerSpawnPoints;
+    
     public GameObject[] characterPrefabs = new GameObject[10];
 
     public Button[] CharacterSelectButton = new Button[10];
 
     private List<NetworkObject> characters = new List<NetworkObject>();
-
-    private Dictionary<PlayerRef, int> playerTeams = new Dictionary<PlayerRef, int>();
-
+    
     [SerializeField] private GameObject CharacterSelectPanel;
     [SerializeField] private GameObject killGameButton;
-    [SerializeField] private GameObject killGamePanel;
+    [SerializeField] private GameObject notificationPanel;
     [SerializeField] private SceneManager sceneManager;
-
-    public static event Action OnRoundOver;
-    public static event Action OnRoundStarted;
-
-
+    [SerializeField] private UiNotificationTexts uiNotificationTexts;
+    [SerializeField] private TMP_Text notificatoinText;
+    
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -59,62 +59,59 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
         
         CharacterSelectPanel.SetActive(false);
     }
-
-
-
-    //===Changed for teams=====
+    
+    
     [Rpc(RpcSources.All, RpcTargets.StateAuthority, HostMode = RpcHostMode.SourceIsHostPlayer)]
     private void RPCRequestSpawnPointRpc(int playerCharacterIndex, RpcInfo info = default)
     {
-        int team = playerTeams[info.Source];
-        SpawnPoint[] spawnList = (team == 1) ? team1SpawnPoints : team2SpawnPoints;
-
+        int spawnPointIndex = 0;
         SpawnPoint targetSpawnPoint;
-        int spawnPointIndex;
-
+        
         do
         {
-            spawnPointIndex = Random.Range(0, spawnList.Length);
-            targetSpawnPoint = spawnList[spawnPointIndex];
-        }
-        while (targetSpawnPoint.isTaken);
-
+            spawnPointIndex = Random.Range(0, tenPlayerSpawnPoints.Length);
+            targetSpawnPoint = tenPlayerSpawnPoints[spawnPointIndex];
+        } while (targetSpawnPoint.isTaken);
+    
         targetSpawnPoint.isTaken = true;
-
-        var obj = runner.SpawnAsync(
+        
+        var obj =  runner.SpawnAsync
+        (
             characterPrefabs[playerCharacterIndex],
             targetSpawnPoint.transform.position,
             targetSpawnPoint.transform.rotation,
             info.Source
         );
-
+           
         characters.Add(obj.Object);
+            
         RPCToggleCharSelectButton(playerCharacterIndex);
+        
+        //RPCSetSpawnPoint(info.Source,spawnSpawnIndex, playerColorIndex);
+    }
+    
+    
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsHostPlayer)] 
+    private void RPCSetSpawnPoint([RpcTarget] PlayerRef playerRef,int spawnPointIndex, int playerCharacterIndex)
+    {
+        Debug.Log("RPCSetSpawnPoint");
+        SpawnPoint targetSpawnPoint = tenPlayerSpawnPoints[spawnPointIndex];
+
+        targetSpawnPoint.isTaken = true;
+        
+           var obj =  runner.Spawn
+            (
+                characterPrefabs[playerCharacterIndex],
+                targetSpawnPoint.transform.position,
+                targetSpawnPoint.transform.rotation
+            );
+           
+            characters.Add(obj);
+            
+            RPCToggleCharSelectButton(playerCharacterIndex);
     }
 
-
-
-    /* [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsHostPlayer)] 
-     private void RPCSetSpawnPoint([RpcTarget] PlayerRef playerRef,int spawnPointIndex, int playerCharacterIndex)
-     {
-         Debug.Log("RPCSetSpawnPoint");
-         SpawnPoint targetSpawnPoint = tenPlayerSpawnPoints[spawnPointIndex];
-
-         targetSpawnPoint.isTaken = true;
-
-            var obj =  runner.Spawn
-             (
-                 characterPrefabs[playerCharacterIndex],
-                 targetSpawnPoint.transform.position,
-                 targetSpawnPoint.transform.rotation
-             );
-
-             characters.Add(obj);
-
-             RPCToggleCharSelectButton(playerCharacterIndex);
-     }*/
-
-
+    
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     private void RPCToggleCharSelectButton( int playerCharacterIndex)
     {
@@ -123,10 +120,14 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     
     
     public void MasterKillGame() { RPCKillGameForAll(); }
-    
-    
+
+
     [Rpc]
-    private void RPCKillGameForAll() { killGamePanel.SetActive(true); }
+    private void RPCKillGameForAll()
+    {
+        notificatoinText.text = uiNotificationTexts.MasterKillGame;
+        notificationPanel.SetActive(true);
+    }
 
     
     public void KillGame() { runner.Shutdown(); }

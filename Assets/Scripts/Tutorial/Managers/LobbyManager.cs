@@ -10,35 +10,33 @@ using UnityEngine;
 using UnityEngine.UI;
 using Unity.Multiplayer;
 using Unity.VisualScripting;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using WebSocketSharp;
 
 
-struct PlayerData
+public struct PlayerData
 {
-    public string playerId; 
-    public string playerName;
+    public int playerId; 
+    public string playerNickname;
     public Color playerColor;
 }
 
 public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
 {
     public const string GAME_SCENE_NAME = "EnderArena";
-
-    //private NetworkRunner _runner;
-    
-    //Relevant Instances
-    //public static LobbyManager Instance;
     
     const string EndersLobby = "Ender's";
     const string MoxieLobby = "Moxie's";
     const string BillsLobby = "Bill's";
 
     private string currentLobby;
-    
-    List<GameObject> playersTextBoxes = new List<GameObject>();
+    private bool NewSessionCreation = false;
     private List<SessionInfo> sessionList = new List<SessionInfo>();
-
+    
+    public List<GameObject> playersTextBoxes = new List<GameObject>();
+    
+    public UnityEvent JoinLobbyEvent;
 
     [Header("Critical Dependencies")] 
     [SerializeField] private GameObject networkRunnerPrefab;
@@ -46,6 +44,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     [SerializeField] private GameObject sessionButtonPrefab;
     [SerializeField] private SceneManager sceneManager;
     [SerializeField] private UiNotificationTexts uiNotificationTexts;
+    [SerializeField] private ClientHostPrepModule hostPrep;
     
     [Header("Panels")]
     [SerializeField] private CanvasGroup GenaralCanvasGroup;
@@ -54,10 +53,11 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     [SerializeField] private GameObject MidSessionPanel;
     [SerializeField] private GameObject SessionButtonLocations;
     [SerializeField] private GameObject newSessionPanel;
-    [SerializeField] private GameObject lockedSessionPanel;
+    [SerializeField] private GameObject PlayerRegistrationPanel;
     [SerializeField] private GameObject notificationPanel;
     [SerializeField] private TMP_Text notificationPanelText;
     //[SerializeField] private GameObject playerNamesListPanel;
+    //[SerializeField] private GameObject lockedSessionPanel;
     
     [Header("Buttons")]
     [SerializeField] private Button[] lobbyButtons;
@@ -73,83 +73,51 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     [SerializeField] private TMP_InputField numberOfPlayersInput;
     [SerializeField] private Toggle publicSessionToggle;
     
+    [Header("New Player Input")]
+    [SerializeField] private TMP_InputField playerNicknameInput;
+    
     [Header("New session restriction settings")]
     [SerializeField] private int minimumPlayers = 4;
     [SerializeField] private int maximumPlayers = 8;
+
+    [Networked] private NetworkDictionary<PlayerRef, PlayerData> playersDataDict => default;
     
 
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
         _runner.AddCallbacks(this);
-        //Instance = this;
     }
     
     
     async Task<StartGameResult> StartGameTutorial(GameMode mode, string SessionNameInput)
     {
-        //RunnerNullCheck(); TODO: delete if unneeded
-        
-        StartGameResult resTask;
-        
+        StartGameArgs args = new StartGameArgs()
+        {
+            GameMode = mode,
+            SessionName = SessionNameInput,
+            CustomLobbyName = _runner.LobbyInfo != null ? _runner.LobbyInfo.Name : null,
+            IsVisible = publicSessionToggle != null ? publicSessionToggle.isOn : true
+        };
+
         if (mode == GameMode.Host)
-        {
-            resTask = await _runner.StartGame(new StartGameArgs()
-           {
-               GameMode = mode,
-               SessionName = SessionNameInput,
-               PlayerCount = int.Parse(numberOfPlayersInput.text),
-               CustomLobbyName = _runner.LobbyInfo.Name,
-               IsVisible = publicSessionToggle.isOn
-           }); 
-        }
-        else
-        {
-            resTask = await _runner.StartGame(new StartGameArgs()
-            {
-                GameMode = mode,
-                SessionName = SessionNameInput,
-                CustomLobbyName = _runner.LobbyInfo.Name,
-                IsVisible = publicSessionToggle.isOn
-            });
-        }
+            args.PlayerCount = int.Parse(numberOfPlayersInput.text);
+
+        if (hostPrep != null)
+            hostPrep.ConfigureStartGameArgs(ref args);
+
+        StartGameResult resTask = await _runner.StartGame(args);
+
+        if (resTask.Ok && hostPrep != null)
+            hostPrep.AttachToRunner(_runner);
 
         return resTask;
     }
+
     
     
     public async void StartSession()
     {
-        if (string.IsNullOrEmpty(newSessionNameInput.text) || string.IsNullOrEmpty(numberOfPlayersInput.text))
-            return;
-        
-        if (newSessionNameInput.text.IsNullOrEmpty())
-        {
-            SessionValidationError(uiNotificationTexts.InvalidSessionName);
-            return;
-        }
-        
-        foreach (SessionInfo session in sessionList)
-        {
-            if (session.Name == newSessionNameInput.text)
-            {
-                SessionValidationError(uiNotificationTexts.SessionNameAlreadyExists);
-                return;
-            }
-        }
-        
-        if(int.Parse(numberOfPlayersInput.text) > maximumPlayers)
-        {
-            SessionValidationError(uiNotificationTexts.MaximalPlayerCountExceeded);
-            return;
-        }
-        
-        if(int.Parse(numberOfPlayersInput.text) < minimumPlayers)
-        {
-            SessionValidationError(uiNotificationTexts.MinimalPlayerCountNotReached);
-            return;
-        }
-
         ToggleButtonInteractivity(startSessionButton);
         
         StartGameResult resTask = await StartGameTutorial(GameMode.Host, newSessionNameInput.text);
@@ -162,12 +130,47 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         else
         {
             Debug.LogError($"Game start failed: {resTask.ShutdownReason}");
-            SessionValidationError(uiNotificationTexts.FailedToStartSession);
+            DataValidationError(uiNotificationTexts.FailedToStartSession);
             ToggleButtonInteractivity(startSessionButton);
         }
     }
+
+    bool NewSessionDataValidation()
+    {
+        if (string.IsNullOrEmpty(newSessionNameInput.text) || string.IsNullOrEmpty(numberOfPlayersInput.text))
+            return false;
+        
+        if (newSessionNameInput.text.IsNullOrEmpty())
+        {
+            DataValidationError(uiNotificationTexts.InvalidSessionName);
+            return false;
+        }
+        
+        foreach (SessionInfo session in sessionList)
+        {
+            if (session.Name == newSessionNameInput.text)
+            {
+                DataValidationError(uiNotificationTexts.SessionNameAlreadyExists);
+                return false;
+            }
+        }
+        
+        if(int.Parse(numberOfPlayersInput.text) > maximumPlayers)
+        {
+            DataValidationError(uiNotificationTexts.MaximalPlayerCountExceeded);
+            return false;
+        }
+        
+        if(int.Parse(numberOfPlayersInput.text) < minimumPlayers)
+        {
+            DataValidationError(uiNotificationTexts.MinimalPlayerCountNotReached);
+            return false;
+        }
+        
+        return true;
+    }
     
-    private void SessionValidationError(string errorMessage)
+    private void DataValidationError(string errorMessage)
     {
         Debug.LogError(errorMessage);
         notificationPanelText.text = errorMessage;
@@ -204,6 +207,11 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     private void ResetNetworkRunner()
     {
         _runner = Instantiate(networkRunnerPrefab).GetComponent<NetworkRunner>();
+
+        if (hostPrep != null)
+        {
+            hostPrep.AttachToRunner(_runner);
+        }
     }
     
     
@@ -228,10 +236,9 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     
     public void TogglePanelVisibility(GameObject panel)
     {
-        
         if (panel)
         {
-            if(panel == notificationPanel)
+            if(panel == notificationPanel || panel == PlayerRegistrationPanel)
                 GenaralCanvasGroup.interactable = !GenaralCanvasGroup.interactable;
                  
             panel.SetActive(!panel.activeSelf);
@@ -282,6 +289,78 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         if(_runner.IsServer)
             startGameButton.gameObject.SetActive(true);
     }
+
+    public void AddPlayerToDictionaryOnNewSession()
+    {
+        if(!NewSessionDataValidation())
+            return;
+        
+        NewSessionCreation = true;
+        TogglePanelVisibility(PlayerRegistrationPanel);
+    }
+    
+    public void AddPlayerToDictionaryOnExistingSession()
+    {
+        if(!NewSessionDataValidation())
+            return;
+        
+        NewSessionCreation = false;
+        TogglePanelVisibility(PlayerRegistrationPanel);
+    }
+    
+    
+    public void AddPlayerDataToDictionary()
+    {
+        foreach (var players in playersDataDict)
+        {
+            if (players.Value.playerNickname == playerNicknameInput.text)
+            {
+                DataValidationError(uiNotificationTexts.NicknameAlreadyExists);
+                return;
+            }
+            
+            if(playerNicknameInput.text.IsNullOrEmpty())
+            {
+                DataValidationError(uiNotificationTexts.NicknameEmptyOrNull);
+                return;
+            }
+            
+            if(players.Key.PlayerId == _runner.LocalPlayer.PlayerId)
+            {
+                DataValidationError(uiNotificationTexts.IdAlreadyExists);
+                return;
+            }
+        }
+        
+        PlayerData tempPlayerData = new PlayerData()
+        {
+            playerId = _runner.LocalPlayer.PlayerId,
+            playerNickname = playerNicknameInput.text
+        };
+        
+        TogglePanelVisibility(PlayerRegistrationPanel);
+
+        if (NewSessionCreation)
+        {
+            StartSession();
+            NewSessionCreation = false;
+        }
+
+        if (_runner.IsServer)
+            playersDataDict.Add(_runner.LocalPlayer, tempPlayerData);
+        else 
+            RPC_RequestAddPlayerData(tempPlayerData);
+        
+        UpdatePlayersList();
+    }
+    
+    
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RPC_RequestAddPlayerData(PlayerData data)
+    {
+        if (_runner.IsServer)
+            playersDataDict.Add(_runner.LocalPlayer, data);
+    }
     
     
     public void MoveToGameScene()
@@ -315,9 +394,8 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
 
         playersTextBoxes.Clear();
         
-        
         foreach (var session in existingSessionButtons) 
-                    Destroy(session.gameObject);
+            Destroy(session.gameObject);
         
         existingSessionButtons.Clear();
         
@@ -331,13 +409,15 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
             ButtonTextRefHolder newButton = newSessionButton.GetComponent<ButtonTextRefHolder>();
 
             newButton.SessionName = session.Name;
-            newButton.buttonText.text = "Room name: " + session.Name + "\nPlayers Count: " + session.PlayerCount;
+            newButton.buttonText.text = "Room name: " + session.Name + "\nPlayer Count: " + session.PlayerCount;
             
-            newButton.onButtonClick.AddListener(JoinSession);
+            newButton.AddPlayerToDictionary.AddListener(AddPlayerToDictionaryOnExistingSession);
+            newButton.JoinGame.AddListener(JoinSession);
 
             existingSessionButtons.Add(newButton.thisButton);
         }
     }
+    
     
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
@@ -345,12 +425,14 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         UpdatePlayersList();
     }
 
+    
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
         Debug.Log("Player Left: " + player);
         UpdatePlayersList();
     }
 
+    
     public void UpdatePlayersList()
     {
         List<PlayerRef> players = _runner.ActivePlayers.ToList();
@@ -363,7 +445,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
             }
             else
             {
-                playerNamesTexts[i].text = players[i].PlayerId.ToString();
+                playerNamesTexts[i].text = playersDataDict[players[i]].playerNickname;
             }
         }
     }
@@ -374,7 +456,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     }
     
     
-    #region UnusedCallbacks
+    #region TheShadowRealm
     
     public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
     {
@@ -428,7 +510,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken)
     {
     }
-
+    
     public void OnSceneLoadDone(NetworkRunner runner)
     {
     }

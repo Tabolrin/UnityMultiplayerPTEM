@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/New/FinalLobby.unity
+    path: Assets/Scenes/New/Lobby.unity
     guid: e1933e263c1507d4fb691393b5750f8e
   - enabled: 1
     path: Assets/Scenes/New/EnderArena.unity
