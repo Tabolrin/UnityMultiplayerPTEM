@@ -9,6 +9,7 @@ public class SpawnerDebug : MonoBehaviour
     private NetworkRunner _runner;
     [SerializeField] private NetworkPrefabRef _playerPrefab;
     [SerializeField] private SceneManager _sceneManager;
+    [SerializeField] private string sessionName;
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
 
     public void SetRunner(NetworkRunner runner)
@@ -36,7 +37,7 @@ public class SpawnerDebug : MonoBehaviour
         await _runner.StartGame(new StartGameArgs()
         {
             GameMode = mode,
-            SessionName = "TestRoom",
+            SessionName = sessionName,
             Scene = scene,
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
         });
