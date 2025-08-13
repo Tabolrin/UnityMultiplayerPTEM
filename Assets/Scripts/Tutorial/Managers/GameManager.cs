@@ -27,8 +27,10 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     [SerializeField] private SceneManager sceneManager;
     [SerializeField] private UiNotificationTexts uiNotificationTexts;
     [SerializeField] private TMP_Text notificatoinText;
-    
-    
+
+    public static event Action OnRoundStarted;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -49,8 +51,6 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
         if(runner.IsSharedModeMasterClient)
             killGameButton.SetActive(true);
     }
-
-
     
     public void CallRpc(int playerColorIndex)
     {
@@ -59,8 +59,22 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
         
         CharacterSelectPanel.SetActive(false);
     }
-    
-    
+
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsHostPlayer)]
+    private void RPC_StartRound()
+    {
+        OnRoundStarted?.Invoke();
+    }
+
+    private void StartRoundRequest()
+    {
+        if (Object.HasStateAuthority)
+        {
+            RPC_StartRound();
+        }
+    }
+
     [Rpc(RpcSources.All, RpcTargets.StateAuthority, HostMode = RpcHostMode.SourceIsHostPlayer)]
     private void RPCRequestSpawnPointRpc(int playerCharacterIndex, RpcInfo info = default)
     {

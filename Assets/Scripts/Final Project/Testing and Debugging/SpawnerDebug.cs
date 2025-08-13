@@ -1,7 +1,5 @@
 using Fusion;
 using Fusion.Addons.Physics;
-using Fusion.Sockets;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -10,19 +8,25 @@ public class SpawnerDebug : MonoBehaviour
 {
     private NetworkRunner _runner;
     [SerializeField] private NetworkPrefabRef _playerPrefab;
-    [SerializeField] INetworkRunnerCallbacks _networkCallbackMaster;
+    [SerializeField] private SceneManager _sceneManager;
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
+
+    public void SetRunner(NetworkRunner runner)
+    {
+        _runner = runner;
+    }
 
     async void StartGame(GameMode mode)
     {
         if (_runner == null)
         {
-            _runner = gameObject.AddComponent<NetworkRunner>(); ;
+            _runner = gameObject.AddComponent<NetworkRunner>();
             var runnerSimulatePhysics3D = gameObject.AddComponent<RunnerSimulatePhysics3D>();
             runnerSimulatePhysics3D.ClientPhysicsSimulation = ClientPhysicsSimulation.SimulateAlways;
         }
 
         _runner.ProvideInput = true;
+
         var scene = SceneRef.FromIndex(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
         var sceneInfo = new NetworkSceneInfo();
 
@@ -37,6 +41,7 @@ public class SpawnerDebug : MonoBehaviour
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
         });
     }
+
     private void OnGUI()
     {
         if (_runner == null)
@@ -52,27 +57,44 @@ public class SpawnerDebug : MonoBehaviour
         }
     }
 
-
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-        if (_runner.IsServer)
+        if (runner.IsServer)
         {
             Vector3 spawnPosition = new Vector3((player.RawEncoded % runner.Config.Simulation.PlayerCount) * 3, 1, 0);
-            NetworkObject networkPlayerObj = _runner.Spawn(_playerPrefab, spawnPosition, Quaternion.identity, player);
+            NetworkObject networkPlayerObj = runner.Spawn(_playerPrefab, spawnPosition, Quaternion.identity, player);
             _spawnedCharacters.Add(player, networkPlayerObj);
             Debug.Log($"Player {player} joined and spawned at {spawnPosition}");
         }
     }
 
-    
-
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
         if (_spawnedCharacters.TryGetValue(player, out NetworkObject networkObject))
         {
-            _runner.Despawn(networkObject);
+            runner.Despawn(networkObject);
             _spawnedCharacters.Remove(player);
         }
-        
+    }
+
+    [ContextMenu("End Game")]
+    public void EndGame()
+    {
+        if (_sceneManager == null)
+        {
+            Debug.LogWarning("SceneManager reference not set on SpawnerDebug!");
+            return;
+        }
+
+        _sceneManager.runner = _runner;
+
+        if (_runner != null && _runner.IsServer)
+        {
+            _sceneManager.OnlineMoveToScene("Lobby");
+        }
+        else
+        {
+            _sceneManager.OfflineMoveToScene("Lobby");
+        }
     }
 }

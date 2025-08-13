@@ -8,21 +8,40 @@ public class InGameCallBackMaster : MonoBehaviour, INetworkRunnerCallbacks
 {
     [SerializeField] InputManager inputManager;
     [SerializeField] SpawnerDebug spawnerDebug;
+    [SerializeField] SceneManager sceneManager;
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
+        spawnerDebug.SetRunner(runner);
         spawnerDebug.OnPlayerJoined(runner, player);
     }
 
-
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
-        spawnerDebug.OnPlayerJoined(runner, player);
+        spawnerDebug.OnPlayerLeft(runner, player);
     }
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
         inputManager.OnInput(runner, input);
+    }
+
+    public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
+    {
+        Debug.Log($"Game ended - shutdown reason: {shutdownReason}");
+        sceneManager.OfflineMoveToScene("Lobby");
+    }
+
+    public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
+    {
+        Debug.Log($"Disconnected: {reason}");
+        sceneManager.OfflineMoveToScene("Lobby");
+    }
+
+    public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason)
+    {
+        Debug.Log($"Connection failed: {reason}");
+        sceneManager.OfflineMoveToScene("Lobby");
     }
 
     #region TheShdowRealm3.0
@@ -35,19 +54,7 @@ public class InGameCallBackMaster : MonoBehaviour, INetworkRunnerCallbacks
     {
     }
 
-    public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
-    {
-    }
-
-    public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
-    {
-    }
-
     public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token)
-    {
-    }
-
-    public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason)
     {
     }
 
