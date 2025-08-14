@@ -1623,6 +1623,7 @@ MonoBehaviour:
   _playerPrefab:
     RawGuidValue: 7f0dd5439fdb0d646a25854677c30878
   _sceneManager: {fileID: 1384573916}
+  sessionName: 
 --- !u!114 &1384573915
 MonoBehaviour:
   m_ObjectHideFlags: 0
