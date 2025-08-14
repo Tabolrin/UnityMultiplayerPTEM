@@ -545,7 +545,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1048367434901505917, guid: d504eefb80773c3458d62d4f8416f93d, type: 3}
       propertyPath: SortKey
-      value: 4142025669
+      value: 4054224331
       objectReference: {fileID: 0}
     - target: {fileID: 2188477048913888362, guid: d504eefb80773c3458d62d4f8416f93d, type: 3}
       propertyPath: m_LocalScale.x
@@ -611,13 +611,17 @@ PrefabInstance:
       propertyPath: m_LocalScale.x
       value: 0.21769406
       objectReference: {fileID: 0}
+    - target: {fileID: 7511777310140995556, guid: d504eefb80773c3458d62d4f8416f93d, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 6764116705797998267}
     - target: {fileID: 8419301153498735060, guid: d504eefb80773c3458d62d4f8416f93d, type: 3}
       propertyPath: m_LocalScale.y
       value: 0.2166156
       objectReference: {fileID: 0}
     - target: {fileID: 8723760983162476051, guid: d504eefb80773c3458d62d4f8416f93d, type: 3}
       propertyPath: SortKey
-      value: 2522720514
+      value: 2434919176
       objectReference: {fileID: 0}
     - target: {fileID: 8924473547986033305, guid: d504eefb80773c3458d62d4f8416f93d, type: 3}
       propertyPath: m_LocalScale.y
@@ -647,6 +651,11 @@ PrefabInstance:
 --- !u!4 &1411724237546826031 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2188477048913888362, guid: d504eefb80773c3458d62d4f8416f93d, type: 3}
+  m_PrefabInstance: {fileID: 993179992992132421}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &6764116705797998267 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5770944830296435710, guid: d504eefb80773c3458d62d4f8416f93d, type: 3}
   m_PrefabInstance: {fileID: 993179992992132421}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1693238206084191396
@@ -1113,7 +1122,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1048367434901505917, guid: d504eefb80773c3458d62d4f8416f93d, type: 3}
       propertyPath: SortKey
-      value: 223859366
+      value: 136058028
       objectReference: {fileID: 0}
     - target: {fileID: 1048367434901505917, guid: d504eefb80773c3458d62d4f8416f93d, type: 3}
       propertyPath: NetworkedBehaviours.Array.size
@@ -1181,7 +1190,7 @@ PrefabInstance:
       objectReference: {fileID: 1635821753098195621}
     - target: {fileID: 8723760983162476051, guid: d504eefb80773c3458d62d4f8416f93d, type: 3}
       propertyPath: SortKey
-      value: 734364433
+      value: 646563095
       objectReference: {fileID: 0}
     - target: {fileID: 9148880628126060903, guid: d504eefb80773c3458d62d4f8416f93d, type: 3}
       propertyPath: m_LocalScale.y
