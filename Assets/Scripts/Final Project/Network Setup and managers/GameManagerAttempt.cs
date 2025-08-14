@@ -62,11 +62,13 @@ public class GameManagerNew : NetworkBehaviour, INetworkRunnerCallbacks
         if (Instance == this) Instance = null;
     }
     
+    
     [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsHostPlayer)]
     private void RPC_StartRound()
     {
         OnRoundStarted?.Invoke();
     }
+    
     
     private void StartRoundRequest()
     {
@@ -76,6 +78,7 @@ public class GameManagerNew : NetworkBehaviour, INetworkRunnerCallbacks
         }
     }
 
+    
     private void PickTeamColorsFromPool()
     {
         const int colorCount = 8;
@@ -107,6 +110,7 @@ public class GameManagerNew : NetworkBehaviour, INetworkRunnerCallbacks
         _team1Pool = new List<Transform>(team1SpawnPoints);
     }
 
+    
     private Transform TakeSpawn(byte team)
     {
         var pool = (team == 0) ? _team0Pool : _team1Pool;
