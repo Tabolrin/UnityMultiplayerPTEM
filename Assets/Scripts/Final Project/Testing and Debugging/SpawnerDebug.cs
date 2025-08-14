@@ -10,7 +10,7 @@ public class SpawnerDebug : MonoBehaviour
     [SerializeField] private NetworkPrefabRef _playerPrefab;
     [SerializeField] private SceneManager _sceneManager;
     [SerializeField] private string sessionName;
-    private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
+    static public Dictionary<PlayerRef, NetworkObject> SpawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
 
     public void SetRunner(NetworkRunner runner)
     {
@@ -64,17 +64,17 @@ public class SpawnerDebug : MonoBehaviour
         {
             Vector3 spawnPosition = new Vector3((player.RawEncoded % runner.Config.Simulation.PlayerCount) * 3, 1, 0);
             NetworkObject networkPlayerObj = runner.Spawn(_playerPrefab, spawnPosition, Quaternion.identity, player);
-            _spawnedCharacters.Add(player, networkPlayerObj);
+            SpawnedCharacters.Add(player, networkPlayerObj);
             Debug.Log($"Player {player} joined and spawned at {spawnPosition}");
         }
     }
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
-        if (_spawnedCharacters.TryGetValue(player, out NetworkObject networkObject))
+        if (SpawnedCharacters.TryGetValue(player, out NetworkObject networkObject))
         {
             runner.Despawn(networkObject);
-            _spawnedCharacters.Remove(player);
+            SpawnedCharacters.Remove(player);
         }
     }
 
