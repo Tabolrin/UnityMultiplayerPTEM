@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2197370498308179148}
   - component: {fileID: 4474589166684755622}
+  - component: {fileID: 6678270025190111741}
   m_Layer: 0
   m_Name: LobbyManager
   m_TagString: Untagged
@@ -44,14 +45,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a305aeb320fd44146be3c5d72332b1d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playersTextBoxes: []
+  JoinLobbyEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  networkRunnerPrefab: {fileID: 0}
+  _runner: {fileID: 0}
   sessionButtonPrefab: {fileID: 6905490498365075140, guid: 38367df85525b43418f7d0501b59816f, type: 3}
   sceneManager: {fileID: 0}
+  uiNotificationTexts: {fileID: 0}
+  hostPrep: {fileID: 0}
+  GenaralCanvasGroup: {fileID: 0}
   sessionListPanel: {fileID: 0}
   Lobbies: {fileID: 0}
   MidSessionPanel: {fileID: 0}
   SessionButtonLocations: {fileID: 0}
   newSessionPanel: {fileID: 0}
-  lockedSessionPanel: {fileID: 0}
+  PlayerRegistrationPanel: {fileID: 0}
+  notificationPanel: {fileID: 0}
+  notificationPanelText: {fileID: 0}
   lobbyButtons:
   - {fileID: 0}
   - {fileID: 0}
@@ -67,3 +79,24 @@ MonoBehaviour:
   newSessionNameInput: {fileID: 0}
   numberOfPlayersInput: {fileID: 0}
   publicSessionToggle: {fileID: 0}
+  playerNicknameInput: {fileID: 0}
+  minimumPlayers: 4
+  maximumPlayers: 8
+--- !u!114 &6678270025190111741
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2868161001641800212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 3835210192
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects: []
+  NetworkedBehaviours: []
+  ForceRemoteRenderTimeframe: 0

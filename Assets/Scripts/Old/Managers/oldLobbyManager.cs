@@ -1,4 +1,4 @@
-using System;
+/*using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,13 +14,6 @@ using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using WebSocketSharp;
 
-
-public struct PlayerData
-{
-    public int playerId; 
-    public string playerNickname;
-    public Color playerColor;
-}
 
 public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
 {
@@ -45,6 +38,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     [SerializeField] private SceneManager sceneManager;
     [SerializeField] private UiNotificationTexts uiNotificationTexts;
     [SerializeField] private ClientHostPrepModule hostPrep;
+    //[SerializeField] private PlayerDataHandler playerDataHandler;
     
     [Header("Panels")]
     [SerializeField] private CanvasGroup GenaralCanvasGroup;
@@ -56,8 +50,6 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     [SerializeField] private GameObject PlayerRegistrationPanel;
     [SerializeField] private GameObject notificationPanel;
     [SerializeField] private TMP_Text notificationPanelText;
-    //[SerializeField] private GameObject playerNamesListPanel;
-    //[SerializeField] private GameObject lockedSessionPanel;
     
     [Header("Buttons")]
     [SerializeField] private Button[] lobbyButtons;
@@ -76,11 +68,11 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     [Header("New Player Input")]
     [SerializeField] private TMP_InputField playerNicknameInput;
     
+    
     [Header("New session restriction settings")]
     [SerializeField] private int minimumPlayers = 4;
     [SerializeField] private int maximumPlayers = 8;
 
-    [Networked] private NetworkDictionary<PlayerRef, PlayerData> playersDataDict => default;
     
 
     private void Awake()
@@ -116,7 +108,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
 
     
     
-    public async void StartSession()
+    public async Task StartSession()
     {
         ToggleButtonInteractivity(startSessionButton);
         
@@ -169,6 +161,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         
         return true;
     }
+    
     
     private void DataValidationError(string errorMessage)
     {
@@ -309,8 +302,9 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     }
     
     
-    public void AddPlayerDataToDictionary()
+    public async void AddPlayerDataToDictionary()
     {
+        
         foreach (var players in playersDataDict)
         {
             if (players.Value.playerNickname == playerNicknameInput.text)
@@ -324,25 +318,18 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
                 DataValidationError(uiNotificationTexts.NicknameEmptyOrNull);
                 return;
             }
-            
-            if(players.Key.PlayerId == _runner.LocalPlayer.PlayerId)
-            {
-                DataValidationError(uiNotificationTexts.IdAlreadyExists);
-                return;
-            }
         }
         
         PlayerData tempPlayerData = new PlayerData()
         {
-            playerId = _runner.LocalPlayer.PlayerId,
             playerNickname = playerNicknameInput.text
         };
-        
+    
         TogglePanelVisibility(PlayerRegistrationPanel);
 
         if (NewSessionCreation)
         {
-            StartSession();
+            await StartSession();  // Await to ensure runner is started
             NewSessionCreation = false;
         }
 
@@ -350,16 +337,16 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
             playersDataDict.Add(_runner.LocalPlayer, tempPlayerData);
         else 
             RPC_RequestAddPlayerData(tempPlayerData);
-        
+    
         UpdatePlayersList();
     }
     
-    
+        
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void RPC_RequestAddPlayerData(PlayerData data)
+    public void RPC_RequestAddPlayerData(PlayerData data, RpcInfo info = default)
     {
         if (_runner.IsServer)
-            playersDataDict.Add(_runner.LocalPlayer, data);
+            playersDataDict.Add(info.Source, data);
     }
     
     
@@ -445,7 +432,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
             }
             else
             {
-                playerNamesTexts[i].text = playersDataDict[players[i]].playerNickname;
+                playerNamesTexts[i].text = playersDataDict[players[i]].playerNickname.ToString();
             }
         }
     }
@@ -520,3 +507,4 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     }
     #endregion
 }
+*/

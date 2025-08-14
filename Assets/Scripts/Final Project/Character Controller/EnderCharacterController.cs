@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 
 
 public enum AstronautColor { Black, Blue, Green, Orange, Pink, Red, White, Yellow, Gray}
+
 public class EnderCharacterController : NetworkBehaviour
 {
     [SerializeField] GameObject playerCamera;
