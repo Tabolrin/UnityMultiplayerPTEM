@@ -15,6 +15,7 @@ public class EnderCharacterController : NetworkBehaviour
     [SerializeField] SkinnedMeshRenderer meshRenderer;
     [SerializeField] PlayerMaterialsContainer matContainer;
     [SerializeField] Rigidbody rb;
+    [SerializeField] NetworkMecanimAnimator anim;
     //[SerializeField] PlayerStats playerStats;
 
     public override void Spawned()
@@ -38,11 +39,13 @@ public class EnderCharacterController : NetworkBehaviour
     {
         if(GetInput(out EnderInputData enderData))
         {
-            rb.rotation = enderData.LookRotation;
             if(enderData.buttons.IsSet(ButtonDefenitions.Move))
             {
                 rb.linearVelocity = enderData.velocity;
+                anim.SetTrigger(0);
             }
+            //rb.rotation = enderData.LookRotation;
+            transform.rotation = enderData.LookRotation;
         }
     }
     
