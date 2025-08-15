@@ -380,7 +380,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
             _runner.GetComponent<RunnerSimulatePhysics3D>().ClientPhysicsSimulation = ClientPhysicsSimulation.SimulateAlways;
             _runner.ProvideInput = true;
 
-            int map = UnityEngine.Random.Range(0, 1);
+            int map = UnityEngine.Random.Range(0, 2);
             switch (map)
             {
                 case 0:

@@ -39,6 +39,7 @@ public class GameManagerNew : NetworkBehaviour, INetworkRunnerCallbacks
     [SerializeField] private TMP_Text notificatoinText;
     [SerializeField] private GameObject leaderboardPanel;
     [SerializeField] private TMP_Text[] leaderboardText;
+    [SerializeField] private InputManager inputManager;
 
     public AstronautColor GetTeamColor(byte team) => (AstronautColor)(team == 0 ? Team0ColorByte : Team1ColorByte);
 
@@ -198,6 +199,11 @@ public class GameManagerNew : NetworkBehaviour, INetworkRunnerCallbacks
         }
     }
 
+    public void OnInput(NetworkRunner r, NetworkInput input)
+    {
+        inputManager.OnInput(r, input);
+    }
+    
     
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
     {
@@ -211,7 +217,6 @@ public class GameManagerNew : NetworkBehaviour, INetworkRunnerCallbacks
     public void OnReliableDataProgress(NetworkRunner runner, PlayerRef player, ReliableKey key, float progress) {}
     public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player){}
     public void OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player) {}
-    public void OnInput(NetworkRunner r, NetworkInput input) {}
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) {}
     public void OnConnectedToServer(NetworkRunner r) {}
     public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason) {}
