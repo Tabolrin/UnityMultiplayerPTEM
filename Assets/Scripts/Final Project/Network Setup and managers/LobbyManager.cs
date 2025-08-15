@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,7 +36,6 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     [SerializeField] private GameObject sessionButtonPrefab;
     [SerializeField] private SceneManager sceneManager;
     [SerializeField] private UiNotificationTexts uiNotificationTexts;
-    [SerializeField] private ClientHostPrepModule hostPrep;
     
     [Header("Player Data")]
     [SerializeField] private NetworkObject playerDataPrefab;
@@ -76,6 +76,14 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     private string pendingNickname;
     private string pendingSessionName = null;
     
+    private bool shouldUpdatePlayerList = false;
+    private float updatePlayerListTimer = 0;
+    private int updatePlayerListInterval = 3; 
+    
+    private bool shouldPushName = false;
+    private float updatePushNameTimer = 0;
+    private int updatePushNameInterval = 3; 
+    
 
     private void Awake()
     {
@@ -107,13 +115,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         if (mode == GameMode.Host)
             args.PlayerCount = int.Parse(numberOfPlayersInput.text);
 
-        if (hostPrep != null)
-            hostPrep.ConfigureStartGameArgs(ref args);
-
         StartGameResult resTask = await _runner.StartGame(args);
-
-        if (resTask.Ok && hostPrep != null)
-            hostPrep.AttachToRunner(_runner);
 
         return resTask;
     }
@@ -129,7 +131,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
             TogglePanelVisibility(newSessionPanel);
             OnGameStarted(_runner);
             
-            TryApplyPendingNickname();
+            //TryApplyPendingNickname();
         }
         else
         {
@@ -190,7 +192,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         if (resTask.Ok)
         {
             OnGameStarted(_runner);
-            TryApplyPendingNickname();
+            //TryApplyPendingNickname();
         }
         else
         {
@@ -207,16 +209,13 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         }
     }
     
+    
     private void ResetNetworkRunner()
     {
         _runner = Instantiate(networkRunnerPrefab).GetComponent<NetworkRunner>();
         _runner.AddCallbacks(this); // ensure callbacks keep firing after reset
-
-        if (hostPrep != null)
-        {
-            hostPrep.AttachToRunner(_runner);
-        }
     }
+    
     
     public async void JoinLobby(string lobbyName)
     {
@@ -235,7 +234,27 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
             ToggleButtonInteractivity(lobbyButtons);
         }
     }
-    
+
+
+    private void Update()
+    {
+        updatePlayerListTimer -= Time.deltaTime;
+        updatePushNameTimer -= Time.deltaTime;
+        
+        if (shouldUpdatePlayerList && updatePlayerListTimer <= 0)
+        {
+            updatePlayerListTimer = updatePlayerListInterval;
+            UpdatePlayersList();
+        }
+
+        if (shouldPushName && updatePushNameTimer <= 0)
+        {
+            updatePushNameTimer = updatePushNameInterval;
+            TryApplyPendingNickname();
+        }
+    }
+
+
     public void TogglePanelVisibility(GameObject panel)
     {
         if (panel)
@@ -283,7 +302,9 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         
         TogglePanelVisibility(sessionListPanel);
         TogglePanelVisibility(MidSessionPanel);
-
+        
+        shouldUpdatePlayerList = true;
+        
         if (_runner.IsServer)
         {
             HostStartGameButton.gameObject.SetActive(true);
@@ -332,11 +353,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
                 await JoinSession(pendingSessionName); // join existing session
             pendingSessionName = null; // reset after joining
         }
-        
-        //TryApplyPendingNickname();
-        UpdatePlayersList();
     }
-    
     
     
     private void TryApplyPendingNickname()
@@ -344,12 +361,17 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         if (_runner == null || string.IsNullOrEmpty(pendingNickname))
             return;
 
+        shouldPushName = true;
+
         var data = PlayerData.Local(_runner);
         
         if (data != null)
         {
+            Debug.Log($"Setting nickname for player: {data.Nickname} to {pendingNickname}");
             PlayerData.SetLocal(_runner, pendingNickname);
             pendingNickname = null;
+            shouldPushName = false;
+            Debug.Log( $"Nickname set for player: {data.Nickname}");
         }
     }
     
@@ -363,6 +385,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
             return;
         }
 
+        shouldUpdatePlayerList = false;
         bool isTeam0 = true;
         foreach (var player in _runner.ActivePlayers)
         {
@@ -444,7 +467,12 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         }
 
         if (player == runner.LocalPlayer)
+        {
+            Debug.Log($"if");
+            shouldPushName = true;
             TryApplyPendingNickname();
+        }
+        Debug.Log($"ifn't");
 
         UpdatePlayersList();
     }
@@ -466,9 +494,11 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     public void UpdatePlayersList()
     {
         if (_runner == null) return;
+        //Debug.Log("Updating Player List");
 
         List<PlayerRef> players = _runner.ActivePlayers.ToList();
         
+        shouldUpdatePlayerList = false;
         for (int i = 0; i < playerNamesTexts.Length; ++i)
         {
             if (i >= players.Count)
@@ -477,8 +507,11 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
             }
             else
             {
-                var pd = PlayerData.Get(_runner, players[i]);
-                playerNamesTexts[i].text = (pd != null && !pd.Nickname.Value.IsNullOrEmpty()) ? pd.Nickname.ToString() : "Joining...";
+                var playerData = PlayerData.Get(_runner, players[i]);
+                playerNamesTexts[i].text = (playerData != null && !playerData.Nickname.Value.IsNullOrEmpty()) ? playerData.Nickname.ToString() : "Joining...";
+                
+                if(!playerData || playerData.Nickname.Value.IsNullOrEmpty()) 
+                    shouldUpdatePlayerList = true;
             }
         }
     }
