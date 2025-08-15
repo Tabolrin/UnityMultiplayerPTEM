@@ -1,9 +1,12 @@
 using ExitGames.Client.Photon.StructWrapping;
 using Fusion;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Net.NetworkInformation;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static Unity.Collections.Unicode;
 
 
 public enum AstronautColor { Black, Blue, Green, Orange, Pink, Red, White, Yellow, Gray}
@@ -15,8 +18,13 @@ public class EnderCharacterController : NetworkBehaviour
     [SerializeField] SkinnedMeshRenderer meshRenderer;
     [SerializeField] PlayerMaterialsContainer matContainer;
     [SerializeField] Rigidbody rb;
-    [SerializeField] NetworkMecanimAnimator anim;
+
+    AstronautColor myColor = AstronautColor.Gray;
+
     //[SerializeField] PlayerStats playerStats;
+
+    [Networked][OnChangedRender(nameof(FreezeColor))] public bool Frozen { get; private set; }
+    [Networked] private int score { get; set; }
 
     public override void Spawned()
     {
@@ -39,19 +47,71 @@ public class EnderCharacterController : NetworkBehaviour
     {
         if(GetInput(out EnderInputData enderData))
         {
-            if(enderData.buttons.IsSet(ButtonDefenitions.Move))
+            transform.rotation = enderData.LookRotation;
+            if (Frozen) return;
+
+            if (enderData.buttons.IsSet(ButtonDefenitions.Move))
             {
                 rb.linearVelocity = enderData.velocity;
-                anim.SetTrigger(0);
             }
             //rb.rotation = enderData.LookRotation;
-            transform.rotation = enderData.LookRotation;
+            if(enderData.buttons.IsSet(ButtonDefenitions.Shoot))
+            {
+                if (RaycastAShot(out PlayerRef myHitPlayer, out EnderCharacterController hitController))
+                {
+                    if (myHitPlayer == enderData.hitTarget && !hitController.Frozen)
+                    {
+                        hitController.Freeze();
+                        score++;
+                    }
+                }
+            }
+        }
+    }
+
+    public void Freeze()
+    {
+        Frozen = true;
+    }
+
+    private void FreezeColor()
+    {
+        switch (myColor)
+        {
+            case AstronautColor.Black:
+                meshRenderer.material = matContainer.freezeBlackMaterial;
+                break;                               
+            case AstronautColor.Blue:                
+                meshRenderer.material = matContainer.freezeBlueMaterial;
+                break;                               
+            case AstronautColor.Green:               
+                meshRenderer.material = matContainer.freezeGreenMaterial;
+                break;                               
+            case AstronautColor.Orange:              
+                meshRenderer.material = matContainer.freezeOrangeMaterial;
+                break;                               
+            case AstronautColor.Pink:                
+                meshRenderer.material = matContainer.freezePinkMaterial;
+                break;                               
+            case AstronautColor.Red:                 
+                meshRenderer.material = matContainer.freezeRedMaterial;
+                break;                               
+            case AstronautColor.White:               
+                meshRenderer.material = matContainer.freezeWhiteMaterial;
+                break;                               
+            case AstronautColor.Yellow:              
+                meshRenderer.material = matContainer.freezeYellowMaterial;
+                break;                               
+            case AstronautColor.Gray:                
+                meshRenderer.material = matContainer.freezeGrayMaterial;
+                break;
         }
     }
     
     //make sure this is called for every pc after the player is spawned the color isnt getting synchronized just by changing it on the host
     public void SetColor(AstronautColor color)
     {
+        myColor = color;
         switch (color)
         {
             case AstronautColor.Black:
@@ -82,5 +142,38 @@ public class EnderCharacterController : NetworkBehaviour
                 meshRenderer.material = matContainer.grayMaterial;
                 break;
         }
+    }
+
+    //double checking the raycast hit from the host too
+    private bool RaycastAShot(out PlayerRef hitPlayer, out EnderCharacterController playerController)
+    {
+        //change as little things when putting it in the real scene
+        Dictionary<PlayerRef, NetworkObject> playerList;
+        if (GameManagerNew.Instance) playerList = GameManagerNew.Instance.SpawnedCharacters;
+        else playerList = SpawnerDebug.SpawnedCharacters;
+        //null random to not throw an error if we dont get a hit
+        hitPlayer = new PlayerRef();
+        playerController = null;
+
+        //find who my player is and then raycast from them
+        Transform myPlayer = playerList[Runner.LocalPlayer].transform;
+        Ray ray = new Ray(myPlayer.position, myPlayer.forward);
+        Physics.Raycast(ray, out RaycastHit hitInfo);
+
+        //start filtering the possible hits until you find who was hit if anyone was hit at all
+        if (hitInfo.collider.gameObject.tag == gameObject.tag)
+        {
+            NetworkObject hitObject = hitInfo.transform.GetComponent<NetworkObject>();
+            foreach (KeyValuePair<PlayerRef, NetworkObject> dictionaryKeyValuePair in playerList)
+            {
+                if (dictionaryKeyValuePair.Value == hitObject)
+                {
+                    playerController = hitObject.GetComponent<EnderCharacterController>();
+                    hitPlayer = dictionaryKeyValuePair.Key;
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

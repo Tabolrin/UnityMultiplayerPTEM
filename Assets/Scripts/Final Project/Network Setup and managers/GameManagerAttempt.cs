@@ -13,7 +13,7 @@ public class GameManagerNew : NetworkBehaviour, INetworkRunnerCallbacks
     public static event Action OnRoundStarted;
 
     private NetworkRunner _runner;
-    private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
+    public Dictionary<PlayerRef, NetworkObject> SpawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
 
 
     [Header("Prefabs & Assets")]
@@ -145,7 +145,7 @@ public class GameManagerNew : NetworkBehaviour, INetworkRunnerCallbacks
         var rot   = spawn ? spawn.rotation : Quaternion.identity;
 
         var avatar = _runner.Spawn(avatarPrefab, pos, rot, player);
-        _spawnedCharacters.Add(player, avatar);
+        SpawnedCharacters.Add(player, avatar);
         data.Avatar = avatar;
     }
     
@@ -164,7 +164,7 @@ public class GameManagerNew : NetworkBehaviour, INetworkRunnerCallbacks
         if (data != null && data.Avatar) 
         {
             runner.Despawn(data.Avatar);
-            _spawnedCharacters.Remove(player);
+            SpawnedCharacters.Remove(player);
             data.Avatar = null;        
         }
     }

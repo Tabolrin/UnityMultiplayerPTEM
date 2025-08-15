@@ -7,4 +7,5 @@ public struct EnderInputData : INetworkInput
     public Quaternion LookRotation;
     public Vector3 velocity;
     public NetworkButtons buttons;
+    public PlayerRef hitTarget;
 }
