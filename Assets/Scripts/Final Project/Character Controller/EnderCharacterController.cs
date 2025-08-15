@@ -147,29 +147,24 @@ public class EnderCharacterController : NetworkBehaviour
     //double checking the raycast hit from the host too
     private bool RaycastAShot(out PlayerRef hitPlayer, out EnderCharacterController playerController)
     {
-        //change as little things when putting it in the real scene
-        Dictionary<PlayerRef, NetworkObject> playerList;
-        if (GameManagerNew.Instance) playerList = GameManagerNew.Instance.SpawnedCharacters;
-        else playerList = SpawnerDebug.SpawnedCharacters;
         //null random to not throw an error if we dont get a hit
         hitPlayer = new PlayerRef();
         playerController = null;
 
         //find who my player is and then raycast from them
-        Transform myPlayer = playerList[Runner.LocalPlayer].transform;
-        Ray ray = new Ray(myPlayer.position, myPlayer.forward);
+        Ray ray = new Ray(transform.position, transform.forward);
         Physics.Raycast(ray, out RaycastHit hitInfo);
 
         //start filtering the possible hits until you find who was hit if anyone was hit at all
         if (hitInfo.collider.gameObject.tag == gameObject.tag)
         {
             NetworkObject hitObject = hitInfo.transform.GetComponent<NetworkObject>();
-            foreach (KeyValuePair<PlayerRef, NetworkObject> dictionaryKeyValuePair in playerList)
+            foreach (PlayerRef playerRef in Runner.ActivePlayers)
             {
-                if (dictionaryKeyValuePair.Value == hitObject)
+                if (PlayerData.Get(Runner, playerRef).Avatar == hitObject)
                 {
                     playerController = hitObject.GetComponent<EnderCharacterController>();
-                    hitPlayer = dictionaryKeyValuePair.Key;
+                    hitPlayer = playerRef;
                     return true;
                 }
             }

@@ -1,5 +1,6 @@
 using Fusion;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.ComTypes;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static UnityEngine.Rendering.DebugUI;
@@ -94,15 +95,11 @@ public class InputManager : MonoBehaviour
 
     private bool RaycastAShot(out PlayerRef hitPlayer)
     {
-        //change as little things when putting it in the real scene
-        Dictionary<PlayerRef, NetworkObject> playerList;
-        if (GameManagerNew.Instance) playerList = GameManagerNew.Instance.SpawnedCharacters;
-        else playerList = SpawnerDebug.SpawnedCharacters;
         //null random to not throw an error if we dont get a hit
         hitPlayer = new PlayerRef();
 
         //find who my player is and then raycast from them
-        Transform myPlayer = playerList[runner.LocalPlayer].transform;
+        Transform myPlayer = PlayerData.Get(runner, runner.LocalPlayer).Avatar.transform;
         Ray ray = new Ray(myPlayer.position, myPlayer.forward);
         Physics.Raycast(ray, out RaycastHit hitInfo);
 
@@ -110,11 +107,11 @@ public class InputManager : MonoBehaviour
         if (hitInfo.collider.gameObject.CompareTag(playerLayer))
         {
             NetworkObject hitObject = hitInfo.transform.GetComponent<NetworkObject>();
-            foreach (KeyValuePair<PlayerRef, NetworkObject> dictionaryKeyValuePair in playerList)
+            foreach (PlayerRef playerRef in runner.ActivePlayers)
             {
-                if (dictionaryKeyValuePair.Value == hitObject)
+                if (PlayerData.Get(runner, playerRef).Avatar == hitObject)
                 {
-                    hitPlayer = dictionaryKeyValuePair.Key;
+                    hitPlayer = playerRef;
                     return true;
                 }
             }
