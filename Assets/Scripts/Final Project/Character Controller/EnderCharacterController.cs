@@ -24,7 +24,7 @@ public class EnderCharacterController : NetworkBehaviour
     //[SerializeField] PlayerStats playerStats;
 
     [Networked][OnChangedRender(nameof(FreezeColor))] public bool Frozen { get; private set; }
-    [Networked] private int score { get; set; }
+    [Networked] public int score { get; private set; }
 
     public override void Spawned()
     {

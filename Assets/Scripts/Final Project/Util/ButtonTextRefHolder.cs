@@ -11,22 +11,15 @@ public class ButtonTextRefHolder : MonoBehaviour
     public Button thisButton;
     
     private LobbyManager lobbyManager;
-    public UnityEvent AddPlayerToDictionary;
-    public UnityEvent<string> JoinGame;
+    public UnityEvent<string> OnSessionButton;
 
     private void Awake()
     {
         lobbyManager = FindFirstObjectByType<LobbyManager>();
-        lobbyManager.JoinLobbyEvent.AddListener(InvokeJoinGame);
     }
 
-    public void InvokeAddPlayerToDictionary()
+    public void InvokeOnSessionButton()
     {
-        AddPlayerToDictionary.Invoke();
-    }
-
-    public void InvokeJoinGame()
-    {
-        JoinGame.Invoke(SessionName);
+        OnSessionButton.Invoke(SessionName);
     }
 }

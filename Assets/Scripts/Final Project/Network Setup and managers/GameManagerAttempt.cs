@@ -12,9 +12,8 @@ public class GameManagerNew : NetworkBehaviour, INetworkRunnerCallbacks
     public static GameManagerNew Instance { get; private set; }
     public static event Action OnRoundStarted;
 
-    private NetworkRunner _runner;
+    private NetworkRunner _nRunner;
     public Dictionary<PlayerRef, NetworkObject> SpawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
-
 
     [Header("Prefabs & Assets")]
     [SerializeField] private NetworkObject avatarPrefab;
@@ -38,16 +37,24 @@ public class GameManagerNew : NetworkBehaviour, INetworkRunnerCallbacks
     [SerializeField] private UiNotificationTexts uiNotificationTexts;
     [SerializeField] private GameObject notificationPanel;
     [SerializeField] private TMP_Text notificatoinText;
+    [SerializeField] private GameObject leaderboardPanel;
+    [SerializeField] private TMP_Text[] leaderboardText;
 
     public AstronautColor GetTeamColor(byte team) => (AstronautColor)(team == 0 ? Team0ColorByte : Team1ColorByte);
 
     public override void Spawned()
     {
         Instance = this;
-        _runner = Runner;
-        _runner.AddCallbacks(this);
+        _nRunner = Runner;
+        _nRunner.AddCallbacks(this);
+
+        foreach (var player in _nRunner.ActivePlayers)
+        {
+            Debug.Log(PlayerData.Get(_nRunner, player).Nickname);
+        }
         
-        if (Object.HasStateAuthority)
+        
+        if (_nRunner.IsServer)
         {
             PickTeamColorsFromPool();
             ResetSpawnPools();
@@ -129,22 +136,22 @@ public class GameManagerNew : NetworkBehaviour, INetworkRunnerCallbacks
 
     private void SpawnAllPlayers()
     {
-        foreach (var p in _runner.ActivePlayers)
+        foreach (var p in _nRunner.ActivePlayers)
             SpawnOne(p);
     }
 
     private void SpawnOne(PlayerRef player)
     {
-        if (!_runner.IsServer) return;
+        if (!_nRunner.IsServer) return;
 
-        var data = PlayerData.Get(_runner, player);
+        var data = PlayerData.Get(_nRunner, player);
         if (data == null) return;
 
         var spawn = TakeSpawn(data.Team);
         var pos   = spawn ? spawn.position : Vector3.zero;
         var rot   = spawn ? spawn.rotation : Quaternion.identity;
 
-        var avatar = _runner.Spawn(avatarPrefab, pos, rot, player);
+        var avatar = _nRunner.Spawn(avatarPrefab, pos, rot, player);
         SpawnedCharacters.Add(player, avatar);
         data.Avatar = avatar;
     }
@@ -180,14 +187,14 @@ public class GameManagerNew : NetworkBehaviour, INetworkRunnerCallbacks
     }
 
     
-    public void KillGame() { _runner.Shutdown(); }
+    public void KillGame() { _nRunner.Shutdown(); }
     
     
     public void LeaveAfterHost()
     {
-        if (_runner != null && _runner.IsRunning)
+        if (_nRunner != null && _nRunner.IsRunning)
         {
-            _runner.Shutdown(); 
+            _nRunner.Shutdown(); 
         }
     }
 

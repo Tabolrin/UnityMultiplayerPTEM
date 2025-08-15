@@ -119,6 +119,8 @@ MonoBehaviour:
   meshRenderer: {fileID: 91093010925416268}
   matContainer: {fileID: 11400000, guid: 5cba5461411a99a4ab21e8c87127c327, type: 2}
   rb: {fileID: 5858031609716288586}
+  _Frozen: 0
+  _score: 0
 --- !u!114 &7311543790441012144
 MonoBehaviour:
   m_ObjectHideFlags: 0

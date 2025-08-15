@@ -262,7 +262,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 4567937319540975275}
         m_TargetAssemblyTypeName: ButtonTextRefHolder, Assembly-CSharp
-        m_MethodName: InvokeAddPlayerToDictionary
+        m_MethodName: InvokeOnSessionButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -287,9 +287,6 @@ MonoBehaviour:
   SessionName: 
   buttonText: {fileID: 1981038349852209635}
   thisButton: {fileID: 7336357046992008579}
-  AddPlayerToDictionary:
-    m_PersistentCalls:
-      m_Calls: []
-  JoinGame:
+  OnSessionButton:
     m_PersistentCalls:
       m_Calls: []
