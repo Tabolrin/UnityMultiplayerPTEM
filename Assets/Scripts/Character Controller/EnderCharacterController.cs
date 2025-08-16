@@ -132,12 +132,20 @@ public class EnderCharacterController : NetworkBehaviour
         {
             Gate gate = other.GetComponent<Gate>();
             PlayerRef me = new PlayerRef();
+            
             foreach(PlayerRef player in Runner.ActivePlayers)
                 if(PlayerData.Get(Runner, player).Avatar == Object)
                     me = player;
 
-            if ( gate.Team != PlayerData.Get(Runner, me).Team)
+            if (gate.Team != PlayerData.Get(Runner, me).Team)
             {
+                foreach(PlayerRef player in Runner.ActivePlayers)
+                {
+                    int score = PlayerData.Get(Runner, player).enderCharacterController.score;
+                    PlayerData PD = PlayerData.Get(Runner, player);
+                    PD.FinalScore = PD.enderCharacterController.score;
+                }
+                
                 GameManager.Instance.RPC_Goal(PlayerData.Get(Runner, me).Team);
             }
         }

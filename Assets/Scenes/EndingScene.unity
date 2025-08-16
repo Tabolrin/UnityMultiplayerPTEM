@@ -203,7 +203,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 25.35
+  m_fontSize: 18
   m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -339,7 +339,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 26.1
+  m_fontSize: 16.85
   m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -424,10 +424,10 @@ RectTransform:
   - {fileID: 275929454}
   m_Father: {fileID: 1737284621}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.33900002}
-  m_AnchorMax: {x: 0.5, y: 0.91700006}
-  m_AnchoredPosition: {x: 0, y: -0.5384674}
-  m_SizeDelta: {x: 300, y: -34}
+  m_AnchorMin: {x: 0.07700001, y: 0.35900003}
+  m_AnchorMax: {x: 0.9183565, y: 0.8880001}
+  m_AnchoredPosition: {x: 1, y: -0.038467407}
+  m_SizeDelta: {x: -62, y: -21}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &260510094
 MonoBehaviour:
@@ -551,7 +551,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 38.9
+  m_fontSize: 20.65
   m_fontSizeBase: 35
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -695,7 +695,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: FinalLobby
+          m_StringArgument: Lobby
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &416261896
@@ -1120,10 +1120,10 @@ RectTransform:
   - {fileID: 416261894}
   m_Father: {fileID: 881649161}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -120, y: -60}
+  m_AnchorMin: {x: 0.11027273, y: 0.094000004}
+  m_AnchorMax: {x: 0.89336365, y: 0.9027638}
+  m_AnchoredPosition: {x: -0.9999695, y: 0.5}
+  m_SizeDelta: {x: 0, y: -1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1737284622
 MonoBehaviour:
@@ -1238,6 +1238,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   personalScoreText: {fileID: 91451410}
+  winLoseText: {fileID: 275929455}
 --- !u!4 &1850821312
 Transform:
   m_ObjectHideFlags: 0

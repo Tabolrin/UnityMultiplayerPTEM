@@ -11,6 +11,8 @@ public class EndScreenUIManager : MonoBehaviour
     private void Awake()
     {
         _runner = NetworkRunner.GetRunnerForScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     void Start()
@@ -20,6 +22,6 @@ public class EndScreenUIManager : MonoBehaviour
         else
             winLoseText.text = "Your Team Lost!";
         
-        personalScoreText.text = "Personal Score: " + SaveWinningTeam.Instance.PlayerScores[_runner.LocalPlayer];
+        personalScoreText.text = "Personal Score: " + PlayerData.Get(_runner, _runner.LocalPlayer).FinalScore;
     }
 }

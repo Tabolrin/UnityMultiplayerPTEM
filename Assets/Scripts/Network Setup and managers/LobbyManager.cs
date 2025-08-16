@@ -17,7 +17,6 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     public const string HARD_GAME_SCENE_NAME = "HarderMap";
     public const string EASY_GAME_SCENE_NAME = "EasyMap";
     public const string END_SCREEN_SCENE_NAME = "EndingScene";
-
     
     const string EndersLobby = "Ender's";
     const string MoxieLobby  = "Moxie's";
@@ -81,12 +80,18 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     
     private bool shouldPushName = false;
     private float updatePushNameTimer = 0;
-    private float updatePushNameInterval = 1.5f; 
-    
+    private float updatePushNameInterval = 1.5f;
+
+    public static LobbyManager instance; 
 
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
+        
+        if(instance)
+            Destroy(instance.gameObject);
+        
+        instance = this;
         
         if (_runner != null)
             _runner.AddCallbacks(this);
@@ -197,6 +202,12 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
             if (resTask.ShutdownReason == ShutdownReason.GameIsFull)
             {
                 notificationPanelText.text = uiNotificationTexts.SessionFull;
+                TogglePanelVisibility(notificationPanel);
+            }
+            
+            if (resTask.ShutdownReason == ShutdownReason.GameClosed)
+            {
+                notificationPanelText.text = uiNotificationTexts.SessionLocked;
                 TogglePanelVisibility(notificationPanel);
             }
             

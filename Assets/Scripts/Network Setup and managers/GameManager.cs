@@ -150,11 +150,7 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     public void RPC_Goal(byte scoringTeam)
     {
         SaveWinningTeam.Instance.WinningTeam = scoringTeam;
-        foreach(PlayerRef player in Runner.ActivePlayers)
-        {
-            int score = PlayerData.Get(Runner, player).enderCharacterController.score;
-            SaveWinningTeam.Instance.PlayerScores.Add(player, score);
-        }
+
         sceneManager.OnlineMoveToScene(ENDING_SCENE_NAME);
     }
     
@@ -222,7 +218,7 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
         RPC_UpdateColors();
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         PlayerData playerData = PlayerData.Get(_nRunner, _nRunner.LocalPlayer);
         if(!playerData.enderCharacterController) return;

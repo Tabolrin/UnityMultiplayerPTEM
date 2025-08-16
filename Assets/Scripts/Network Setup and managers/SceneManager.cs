@@ -24,6 +24,9 @@ public class SceneManager : MonoBehaviour
     
     public void OfflineMoveToScene(string sceneName)
     {
+        if (runner != null)
+            runner.Shutdown();
+        
         UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
     }
 }

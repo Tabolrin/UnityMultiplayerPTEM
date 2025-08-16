@@ -26,7 +26,7 @@ MonoBehaviour:
   freezeBlueMaterial: {fileID: 2100000, guid: 2e006aef44e9ff4428dff247a57e324f, type: 2}
   freezeGreenMaterial: {fileID: 2100000, guid: 0c83c28a4d3b5a74c8a903e88582f549, type: 2}
   freezeYellowMaterial: {fileID: 2100000, guid: 8f38dbdba1939054b96893e26c4d961f, type: 2}
-  freezeOrangeMaterial: {fileID: 2100000, guid: 33a4e7a4deafe124f8a65211c64c0054, type: 2}
+  freezeOrangeMaterial: {fileID: 2100000, guid: 5da4c6079390a7340a4a11e0cfffa591, type: 2}
   freezeWhiteMaterial: {fileID: 2100000, guid: d4e4dc205edcf8d4594f59fdcd8ece18, type: 2}
   freezeGrayMaterial: {fileID: 2100000, guid: d96129ff473fc7b47b02e4cca5593c7c, type: 2}
   freezePinkMaterial: {fileID: 2100000, guid: e887d3d1cc555ce43a3c26699c761406, type: 2}
