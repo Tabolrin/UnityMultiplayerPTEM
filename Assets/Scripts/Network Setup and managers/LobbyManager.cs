@@ -151,7 +151,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         if (string.IsNullOrEmpty(newSessionNameInput.text) || string.IsNullOrEmpty(numberOfPlayersInput.text))
             return false;
         
-        if (newSessionNameInput.text.IsNullOrEmpty())
+        if (newSessionNameInput.text.IsNullOrEmpty() || newSessionNameInput.text.Length > 10)
         {
             DataValidationError(uiNotificationTexts.InvalidSessionName);
             return false;
