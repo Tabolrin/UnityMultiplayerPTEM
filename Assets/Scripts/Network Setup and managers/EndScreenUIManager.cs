@@ -5,7 +5,7 @@ public class EndScreenUIManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        Debug.Log(SaveWinningTeam.Instance.WinningTeam);
+        Debug.Log("Next scene has " + SaveWinningTeam.Instance.WinningTeam);
     }
 
     // Update is called once per frame

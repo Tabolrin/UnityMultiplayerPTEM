@@ -151,6 +151,7 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsServer)]
     public void RPC_Goal(byte scoringTeam)
     {
+        Debug.Log("RPC got " + scoringTeam);
         SaveWinningTeam.Instance.WinningTeam = scoringTeam;
         sceneManager.OnlineMoveToScene(ENDING_SCENE_NAME);
     }

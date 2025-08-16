@@ -148,8 +148,7 @@ public class EnderCharacterController : NetworkBehaviour
 
             if ( gate.Team != PlayerData.Get(Runner, me).Team)
             {
-                Debug.Log("inside input authority");
-                GameManager.Instance.RPC_Goal(PlayerData.Get(Runner, Runner.LocalPlayer).Team);
+                GameManager.Instance.RPC_Goal(PlayerData.Get(Runner, me).Team);
             }
         }
     }
@@ -165,6 +164,7 @@ public class EnderCharacterController : NetworkBehaviour
         Ray ray = new Ray(transform.position, transform.forward);
         Physics.Raycast(ray, out RaycastHit hitInfo);
 
+        Debug.Log("EnderController hit " + hitInfo.collider.gameObject.tag);
         //start filtering the possible hits until you find who was hit if anyone was hit at all
         if (hitInfo.collider.gameObject.tag == gameObject.tag)
         {
