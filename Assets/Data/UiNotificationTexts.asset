@@ -25,3 +25,4 @@ MonoBehaviour:
   <IdAlreadyExists>k__BackingField: Unable to join room.
   <MasterKillGame>k__BackingField: The host has closed the room. You will be returned
     to the Lobby.
+  <NicknameLengthError>k__BackingField: Name must be between 2-10 characters

@@ -192,7 +192,6 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         if (resTask.Ok)
         {
             OnGameStarted(_runner);
-            //TryApplyPendingNickname();
         }
         else
         {
@@ -335,6 +334,12 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         if (string.IsNullOrEmpty(nick))
         {
             DataValidationError(uiNotificationTexts.NicknameEmptyOrNull);
+            return;
+        }
+        
+        if (nick.Length < 2 || nick.Length > 10)
+        {
+            DataValidationError(uiNotificationTexts.NicknameLengthError);
             return;
         }
 

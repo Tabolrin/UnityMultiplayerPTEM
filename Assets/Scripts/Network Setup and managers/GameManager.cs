@@ -1,15 +1,17 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Fusion;
 using Fusion.Addons.Physics;
 using Fusion.Sockets;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
-public class GameManagerNew : NetworkBehaviour, INetworkRunnerCallbacks
+public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
 {
-    public static GameManagerNew Instance { get; private set; }
+    public static GameManager Instance { get; private set; }
     public static event Action OnRoundStarted;
 
     private NetworkRunner _nRunner;
@@ -32,15 +34,26 @@ public class GameManagerNew : NetworkBehaviour, INetworkRunnerCallbacks
     [Networked] public byte Team0ColorByte { get; set; } // stores AstronautColor as byte
     [Networked] public byte Team1ColorByte { get; set; }
     
-    [SerializeField] private GameObject killGameButton;
     [SerializeField] private SceneManager sceneManager;
     [SerializeField] private UiNotificationTexts uiNotificationTexts;
-    [SerializeField] private GameObject notificationPanel;
-    [SerializeField] private TMP_Text notificatoinText;
-    [SerializeField] private GameObject leaderboardPanel;
-    [SerializeField] private TMP_Text[] leaderboardText;
     [SerializeField] private InputManager inputManager;
+    
+    [Header("Panels")]
+    [SerializeField] private GameObject notificationPanel;
+    [SerializeField] private GameObject leaderboardPanel;
+    
+    [Header("Buttons")]
+    [SerializeField] private Button quitButton;
+    
+    [Header("Text Boxes")]
+    [SerializeField] private TMP_Text[] leaderboardText;
+    [SerializeField] private TMP_Text notificatoinText;
+    [SerializeField] private TMP_Text infoUiText;
+    [SerializeField] private TMP_Text quitButtonText;
 
+    
+    private Coroutine runningInfoUiCoroutine;
+    
     public AstronautColor GetTeamColor(byte team) => (AstronautColor)(team == 0 ? Team0ColorByte : Team1ColorByte);
 
     public override void Spawned()
@@ -54,13 +67,18 @@ public class GameManagerNew : NetworkBehaviour, INetworkRunnerCallbacks
             Debug.Log(PlayerData.Get(_nRunner, player).Nickname);
         }
         
-        
         if (_nRunner.IsServer)
         {
             PickTeamColorsFromPool();
             ResetSpawnPools();
             SpawnAllPlayers();
             GameStarted = true;
+            quitButtonText.text = "Close Room";
+        }
+        else
+        {
+            quitButtonText.text = "Quit To Lobby";
+
         }
     }
 
@@ -167,23 +185,36 @@ public class GameManagerNew : NetworkBehaviour, INetworkRunnerCallbacks
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
         if (!Object.HasStateAuthority) return;
-
+        
         var data = PlayerData.Get(runner, player);
         if (data != null && data.Avatar) 
         {
+            infoUiText.text = $"{data.Nickname} has disconnected";
+            
+            if (runningInfoUiCoroutine != null)
+                StopCoroutine(runningInfoUiCoroutine);
+            
+            runningInfoUiCoroutine = StartCoroutine(ClearInfoUiTextCoroutine());
             runner.Despawn(data.Avatar);
             SpawnedCharacters.Remove(player);
-            data.Avatar = null;        
+            data.Avatar = null; 
         }
     }
-
-    public void MasterKillGame() { RPCKillGameForAll(); }
-
-
-    [Rpc]
-    private void RPCKillGameForAll()
+    
+    private IEnumerator ClearInfoUiTextCoroutine()
     {
-        notificatoinText.text = uiNotificationTexts.MasterKillGame;
+        if (infoUiText == null) yield break;
+        yield return new WaitForSeconds(5f);
+        infoUiText.text = string.Empty;
+    }
+
+    public void HostCloseRoom() { RPC_CloseRoom(); }
+
+
+    [Rpc (RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsHostPlayer)]
+    private void RPC_CloseRoom()
+    {
+        notificatoinText.text = uiNotificationTexts.HostClosedRoom;
         notificationPanel.SetActive(true);
     }
 

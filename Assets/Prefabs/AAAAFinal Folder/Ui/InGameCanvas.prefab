@@ -2384,7 +2384,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Capipdiybn has disconnected '
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ec8f068a1584fa245ae7663913d6311a, type: 2}
   m_sharedMaterial: {fileID: -2436364998022136396, guid: ec8f068a1584fa245ae7663913d6311a, type: 2}
