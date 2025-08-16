@@ -63,6 +63,7 @@ public class EnderCharacterController : NetworkBehaviour
                     {
                         hitController.Freeze();
                         score++;
+                        PlayerData.Get(Runner, Runner.LocalPlayer).scoreData.score = score;
                     }
                 }
             }

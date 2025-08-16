@@ -9,7 +9,7 @@ public class PlayerData : NetworkBehaviour
     [Networked] public AstronautColor TeamColor { get; set; }
     [Networked] public NetworkObject Avatar { get; set; }
     
-    ScoreData scoreData;
+    public ScoreData scoreData;
 
     private void Awake()
     {
