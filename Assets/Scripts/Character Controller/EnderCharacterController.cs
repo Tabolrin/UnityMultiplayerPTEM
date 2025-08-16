@@ -1,5 +1,6 @@
 using ExitGames.Client.Photon.StructWrapping;
 using Fusion;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Net.NetworkInformation;
@@ -19,9 +20,7 @@ public class EnderCharacterController : NetworkBehaviour
     [SerializeField] PlayerMaterialsContainer matContainer;
     [SerializeField] Rigidbody rb;
 
-    AstronautColor myColor = AstronautColor.Gray;
-
-    //[SerializeField] PlayerStats playerStats;
+    [Networked] AstronautColor myColor { get; set; } = AstronautColor.Gray;
 
     [Networked][OnChangedRender(nameof(FreezeColor))] public bool Frozen { get; private set; }
     [Networked] public int score { get; private set; }
@@ -41,6 +40,8 @@ public class EnderCharacterController : NetworkBehaviour
             model.SetActive(true);
             playerCamera.SetActive(false);
         }
+        PlayerRef me = GetInputAuthority();
+        SetColor(PlayerData.Get(Runner, me).TeamColor);
     }
 
     public override void FixedUpdateNetwork()
@@ -59,6 +60,7 @@ public class EnderCharacterController : NetworkBehaviour
             {
                 if (RaycastAShot(out PlayerRef myHitPlayer, out EnderCharacterController hitController))
                 {
+                    Debug.Log($"Client hit {enderData.hitTarget}, I hit {myHitPlayer}, they are frozen {hitController.Frozen}");
                     if (myHitPlayer == enderData.hitTarget && !hitController.Frozen)
                     {
                         hitController.Freeze();
@@ -157,6 +159,7 @@ public class EnderCharacterController : NetworkBehaviour
         Physics.Raycast(ray, out RaycastHit hitInfo);
 
         //start filtering the possible hits until you find who was hit if anyone was hit at all
+        Debug.Log(hitInfo.collider.gameObject.tag);
         if (hitInfo.collider.gameObject.tag == gameObject.tag)
         {
             NetworkObject hitObject = hitInfo.transform.GetComponent<NetworkObject>();
@@ -171,5 +174,16 @@ public class EnderCharacterController : NetworkBehaviour
             }
         }
         return false;
+    }
+
+    private PlayerRef GetInputAuthority()
+    {
+        foreach(PlayerRef player in Runner.ActivePlayers)
+        {
+            Debug.Log($"{player} player has this object {PlayerData.Get(Runner, player).Avatar}, I am {Object}");
+            if(PlayerData.Get(Runner, player).Avatar == Object)
+                return player;
+        }
+        throw new IndexOutOfRangeException("playerRef has no PlayerData associated with it");
     }
 }
