@@ -77,17 +77,23 @@ public class InputManager : MonoBehaviour
     //get the input with the new input system
     public void OnLook(InputAction.CallbackContext inputContext)
     {
+        if (Cursor.visible)
+            return;
         Vector2 input = inputContext.ReadValue<Vector2>();
         deltaLookRotation.x = -input.y * playerStats.LookSpeed;
         deltaLookRotation.y = input.x * playerStats.LookSpeed;
     }
     public void OnRoll(InputAction.CallbackContext inputContext)
     {
+        if (Cursor.visible)
+            return;
         deltaLookRotation.z = -inputContext.ReadValue<float>() * playerStats.LookSpeed;
         
     }
     public void OnMove(InputAction.CallbackContext inputContext) 
     {
+        if (Cursor.visible)
+            return;
         movement = _lookDirection * Vector3.forward * playerStats.MoveSpeed;
         shouldInputMove = true;
     }
@@ -108,6 +114,9 @@ public class InputManager : MonoBehaviour
     
     public void OnShoot(InputAction.CallbackContext inputContext) 
     {
+        if(Cursor.visible)
+            return;
+
         movement = _lookDirection * Vector3.forward * playerStats.MoveSpeed;
         RaycastAShot(out PlayerRef currentHitPlayer);
         //if hitTarget.team == notMine (figure how that whole thing works)

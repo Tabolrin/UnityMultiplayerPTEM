@@ -4,6 +4,7 @@ public class Gate : MonoBehaviour
 {
 
     [SerializeField] private Animator animator;
+    [field: SerializeField] public byte Team { get; private set; }
 
     private void Start()
     {

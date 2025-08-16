@@ -621,6 +621,10 @@ PrefabInstance:
       propertyPath: animator
       value: 
       objectReference: {fileID: 6764116705797998267}
+    - target: {fileID: 7511777310140995556, guid: d504eefb80773c3458d62d4f8416f93d, type: 3}
+      propertyPath: <Team>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8419301153498735060, guid: d504eefb80773c3458d62d4f8416f93d, type: 3}
       propertyPath: m_LocalScale.y
       value: 0.2166156
