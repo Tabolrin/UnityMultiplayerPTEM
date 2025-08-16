@@ -44,9 +44,6 @@ public class EnderCharacterController : NetworkBehaviour
 
     public override void FixedUpdateNetwork()
     {
-        if (Frozen && !colorFrozen)
-            FreezeColor();
-
         if(GetInput(out EnderInputData enderData))
         {
             transform.rotation = enderData.LookRotation;
@@ -72,6 +69,12 @@ public class EnderCharacterController : NetworkBehaviour
                 }
             }
         }
+    }
+
+    private void Update()
+    {
+        if (Frozen && !colorFrozen)
+            FreezeColor();
     }
 
     public void Freeze()
