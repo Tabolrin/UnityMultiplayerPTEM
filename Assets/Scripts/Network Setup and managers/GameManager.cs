@@ -58,6 +58,7 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     [SerializeField] private TMP_Text scoreUiText;
     
     private Coroutine runningInfoUiCoroutine;
+    private bool shouldUpdateScore = false;
     
     public AstronautColor GetTeamColor(byte team) => team == 0 ? Team0Color : Team1Color;
 
@@ -219,11 +220,12 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
             SpawnOne(p);
 
         RPC_UpdateColors();
+        shouldUpdateScore = true;
     }
 
     private void Update()
     {
-        if(PlayerData.Get(_nRunner, _nRunner.LocalPlayer) == null) return;
+        if(shouldUpdateScore) return;
         scoreUiText.text = PlayerData.Get(_nRunner, _nRunner.LocalPlayer).enderCharacterController.score.ToString();
     }
 
