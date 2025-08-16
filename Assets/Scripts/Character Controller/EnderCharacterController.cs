@@ -111,7 +111,7 @@ public class EnderCharacterController : NetworkBehaviour
     }
     
     //make sure this is called for every pc after the player is spawned the color isnt getting synchronized just by changing it on the host
-    private void SetColor(AstronautColor color)
+    public void SetColor(AstronautColor color)
     {
         myColor = color;
         switch (color)
