@@ -134,7 +134,7 @@ public class InputManager : MonoBehaviour
         Ray ray = new Ray(myPlayer.position, myPlayer.forward);
         Physics.Raycast(ray, out RaycastHit hitInfo);
 
-        Debug.Log("InputManager hit " + hitInfo.collider.gameObject.tag);
+        //Debug.Log("InputManager hit " + hitInfo.collider.gameObject.tag);
         //start filtering the possible hits until you find who was hit if anyone was hit at all
         if (hitInfo.collider && hitInfo.collider.gameObject.CompareTag(playerLayer))
         {
