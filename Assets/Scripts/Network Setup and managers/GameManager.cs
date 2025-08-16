@@ -76,6 +76,49 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
         {
             quitButtonText.text = "Quit To Lobby";
         }
+
+        LecturerInfoForUselessJSON forYouLior = new LecturerInfoForUselessJSON
+        {
+            FinalGrade = 100,
+            LecturerName = "Lior",
+            LecturerTitles = new List<string> 
+            { 
+                "Hamartze",
+                "Hamore",
+                "Sensei",
+                "Hamadrich Haruchani",
+                "Guru",
+                "Hashech",
+                "The One and Only",
+                "The Legend",
+                "The Myth"
+            }
+        };
+
+        string json = JsonUtility.ToJson(forYouLior);
+        
+        if(_nRunner.IsServer)
+            RPC_PrintUselessJSON(json);
+    }
+    
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsHostPlayer)]
+    private void RPC_PrintUselessJSON(string uselessJson)
+    {
+        Debug.Log(uselessJson);
+        
+        LecturerInfoForUselessJSON uselessJSONTheRemake = JsonUtility.FromJson<LecturerInfoForUselessJSON>(uselessJson);
+        string messege = "but ";
+        foreach(string title in uselessJSONTheRemake.LecturerTitles)
+        {
+            messege += title + ", ";
+        }
+        
+        messege += uselessJSONTheRemake.LecturerName +
+                   "!. We couldnt find a usage for sending a JSON! so we sent this instead. We expect to get "
+                   + uselessJSONTheRemake.FinalGrade;
+        
+        notificationText.text = messege;
+        ToggleObject(notificationPanel);
     }
 
     public override void Despawned(NetworkRunner runner, bool hasState)
@@ -185,8 +228,7 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
         var spawn = TakeSpawn(data.Team);
         var pos   = spawn ? spawn.position : Vector3.zero;
         var rot   = spawn ? spawn.rotation : Quaternion.identity;
-
-        data.SetScoreData();
+        
         var avatar = _nRunner.Spawn(avatarPrefab, pos, rot, player);
         SpawnedCharacters.Add(player, avatar);
         data.Avatar = avatar;

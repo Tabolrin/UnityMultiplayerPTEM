@@ -9,7 +9,7 @@ public class PlayerData : NetworkBehaviour
     [Networked] public AstronautColor TeamColor { get; set; }
     [Networked] public NetworkObject Avatar { get; set; }
     
-    public ScoreData scoreData;
+
 
     private void Awake()
     {
@@ -35,11 +35,6 @@ public class PlayerData : NetworkBehaviour
             data.RPC_Set(nickname);
         else 
             Debug.LogWarning("PlayerData not spawned yet. Try again shortly.");
-    }
-    
-    public void SetScoreData()
-    { 
-        scoreData = new ScoreData(Nickname.Value, 0, TeamColor);
     }
 
     
