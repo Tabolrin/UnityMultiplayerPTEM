@@ -14,6 +14,7 @@ public class EnderCharacterController : NetworkBehaviour
     [SerializeField] private SkinnedMeshRenderer meshRenderer;
     [SerializeField] private PlayerMaterialsContainer matContainer;
     [SerializeField] private Rigidbody rb;
+    [SerializeField] private LaserPulse laser;
 
     [Networked] AstronautColor myColor { get; set; } = AstronautColor.Gray;
 
@@ -35,6 +36,9 @@ public class EnderCharacterController : NetworkBehaviour
             model.SetActive(true);
             playerCamera.SetActive(false);
         }
+        
+        if (!laser) 
+            laser = GetComponentInChildren<LaserPulse>(true);
     }
 
     public override void FixedUpdateNetwork()
@@ -51,12 +55,15 @@ public class EnderCharacterController : NetworkBehaviour
             //rb.rotation = enderData.LookRotation;
             if(enderData.buttons.IsSet(ButtonDefenitions.Shoot))
             {
+                if (laser)
+                    laser.Pulse();
+
                 if (RaycastAShot(out PlayerRef myHitPlayer, out EnderCharacterController hitController))
                 {
                     if (myHitPlayer == enderData.hitTarget && !hitController.Frozen)
                     {
                         hitController.Freeze();
-                        score++;
+                        score+= 1000;
                     }
                 }
             }
@@ -67,6 +74,7 @@ public class EnderCharacterController : NetworkBehaviour
     {
         Frozen = true;
     }
+    
     private void FreezeColor()
     {
         switch (myColor)

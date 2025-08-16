@@ -55,6 +55,7 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     [SerializeField] private TMP_Text notificationText;
     [SerializeField] private TMP_Text infoUiText;
     [SerializeField] private TMP_Text quitButtonText;
+    [SerializeField] private TMP_Text scoreUiText;
     
     private Coroutine runningInfoUiCoroutine;
     
@@ -108,10 +109,10 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsHostPlayer)]
     private void RPC_PrintUselessJSON(string uselessJson)
     {
-        
-        
         LecturerInfoForUselessJSON uselessJSONTheRemake = JsonUtility.FromJson<LecturerInfoForUselessJSON>(uselessJson);
+        
         string messege = "but ";
+        
         foreach(string title in uselessJSONTheRemake.LecturerTitles)
         {
             messege += title + ", ";
@@ -219,7 +220,13 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
 
         RPC_UpdateColors();
     }
-    
+
+    private void Update()
+    {
+        if(PlayerData.Get(_nRunner, _nRunner.LocalPlayer) == null) return;
+        scoreUiText.text = PlayerData.Get(_nRunner, _nRunner.LocalPlayer).enderCharacterController.score.ToString();
+    }
+
     [Rpc (RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsHostPlayer)]
     private void RPC_UpdateColors()
     {
@@ -244,6 +251,7 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
         var avatar = _nRunner.Spawn(avatarPrefab, pos, rot, player);
         SpawnedCharacters.Add(player, avatar);
         data.Avatar = avatar;
+        data.enderCharacterController = avatar.GetComponent<EnderCharacterController>();
     }
     
 

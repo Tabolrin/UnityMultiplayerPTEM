@@ -8,13 +8,11 @@ public class PlayerData : NetworkBehaviour
     [Networked] public byte Team { get; set; }
     [Networked] public AstronautColor TeamColor { get; set; }
     [Networked] public NetworkObject Avatar { get; set; }
+    public EnderCharacterController enderCharacterController;
     
-
-
     private void Awake()
     {
         DontDestroyOnLoad(this);
-        
     }
 
     public static PlayerData Get(NetworkRunner runner, PlayerRef player)
