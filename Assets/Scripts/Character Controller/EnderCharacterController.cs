@@ -152,7 +152,7 @@ public class EnderCharacterController : NetworkBehaviour
         //start filtering the possible hits until you find who was hit if anyone was hit at all
         if (hitInfo.collider.gameObject.tag == gameObject.tag)
         {
-            NetworkObject hitObject = hitInfo.transform.GetComponent<NetworkObject>();
+            //NetworkObject hitObject = hitInfo.transform.GetComponent<NetworkObject>();
             foreach (PlayerRef playerRef in Runner.ActivePlayers)
             {
                 if (PlayerData.Get(Runner, playerRef).Avatar == hitObject)
