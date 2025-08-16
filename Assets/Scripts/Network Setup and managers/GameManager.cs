@@ -117,6 +117,14 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
         
         Team0Color = c0;
         Team1Color = c1;
+
+        foreach (var player in _nRunner.ActivePlayers)
+        {
+            if (PlayerData.Get(_nRunner, player).Team == 0)
+                PlayerData.Get(_nRunner, player).TeamColor = Team0Color;
+            else
+                PlayerData.Get(_nRunner, player).TeamColor = Team1Color;
+        }
     }
 
     private void ResetSpawnPools()
