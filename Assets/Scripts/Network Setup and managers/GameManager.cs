@@ -12,6 +12,8 @@ using Random = UnityEngine.Random;
 
 public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
 {
+    const string ENDING_SCENE_NAME = "EndingScene";
+
     public static GameManager Instance { get; private set; }
     public static event Action OnRoundStarted;
 
@@ -89,9 +91,9 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
                 "Hamadrich Haruchani",
                 "Guru",
                 "Hashech",
-                "The One and Only",
-                "The Legend",
-                "The Myth"
+                "Haechad Vehayachid",
+                "Ha'agada",
+                "Hamythos"
             }
         };
 
@@ -99,12 +101,14 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
         
         if(_nRunner.IsServer)
             RPC_PrintUselessJSON(json);
+        
+        StartRoundRequest();
     }
     
     [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsHostPlayer)]
     private void RPC_PrintUselessJSON(string uselessJson)
     {
-        Debug.Log(uselessJson);
+        
         
         LecturerInfoForUselessJSON uselessJSONTheRemake = JsonUtility.FromJson<LecturerInfoForUselessJSON>(uselessJson);
         string messege = "but ";
@@ -114,9 +118,9 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
         }
         
         messege += uselessJSONTheRemake.LecturerName +
-                   "!. We couldnt find a usage for sending a JSON! so we sent this instead. We expect to get "
-                   + uselessJSONTheRemake.FinalGrade;
-        
+                   "!. We couldnt find a usage for sending a JSON! so we sent this instead. We expect to get graded "
+                   + uselessJSONTheRemake.FinalGrade + " points";
+
         notificationText.text = messege;
         ToggleObject(notificationPanel);
     }
@@ -137,12 +141,19 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     
     private void StartRoundRequest()
     {
-        if (Object.HasStateAuthority)
+        if (Runner.IsServer)
         {
             RPC_StartRound();
         }
     }
 
+    
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsServer)]
+    public void RPC_Goal(byte scoringTeam)
+    {
+        SaveWinningTeam.Instance.WinningTeam = scoringTeam;
+        sceneManager.OnlineMoveToScene(ENDING_SCENE_NAME);
+    }
     
     private void PickTeamColorsFromPool()
     {

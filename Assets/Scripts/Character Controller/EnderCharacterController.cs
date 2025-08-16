@@ -1,24 +1,19 @@
-using ExitGames.Client.Photon.StructWrapping;
 using Fusion;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Net.NetworkInformation;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using static Unity.Collections.Unicode;
+
 
 
 public enum AstronautColor { Black, Blue, Green, Orange, Pink, Red, White, Yellow, Gray}
 
 public class EnderCharacterController : NetworkBehaviour
 {
-    [SerializeField] GameObject playerCamera;
-    [SerializeField] GameObject model;
-    [SerializeField] SkinnedMeshRenderer meshRenderer;
-    [SerializeField] PlayerMaterialsContainer matContainer;
-    [SerializeField] Rigidbody rb;
+    private const string GATE_TAG = "Gate";
+
+    [SerializeField] private GameObject playerCamera;
+    [SerializeField] private GameObject model;
+    [SerializeField] private SkinnedMeshRenderer meshRenderer;
+    [SerializeField] private PlayerMaterialsContainer matContainer;
+    [SerializeField] private Rigidbody rb;
 
     [Networked] AstronautColor myColor { get; set; } = AstronautColor.Gray;
 
@@ -40,8 +35,6 @@ public class EnderCharacterController : NetworkBehaviour
             model.SetActive(true);
             playerCamera.SetActive(false);
         }
-        //PlayerRef me = GetInputAuthority();
-        //SetColor(PlayerData.Get(Runner, me).TeamColor);
     }
 
     public override void FixedUpdateNetwork()
@@ -74,7 +67,6 @@ public class EnderCharacterController : NetworkBehaviour
     {
         Frozen = true;
     }
-
     private void FreezeColor()
     {
         switch (myColor)
@@ -109,7 +101,6 @@ public class EnderCharacterController : NetworkBehaviour
         }
     }
     
-    //make sure this is called for every pc after the player is spawned the color isnt getting synchronized just by changing it on the host
     public void SetColor(AstronautColor color)
     {
         myColor = color;
@@ -145,6 +136,24 @@ public class EnderCharacterController : NetworkBehaviour
         }
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag(GATE_TAG))
+        {
+            Gate gate = other.GetComponent<Gate>();
+            PlayerRef me = new PlayerRef();
+            foreach(PlayerRef player in Runner.ActivePlayers)
+                if(PlayerData.Get(Runner, player).Avatar == Object)
+                    me = player;
+
+            if ( gate.Team != PlayerData.Get(Runner, me).Team)
+            {
+                Debug.Log("inside input authority");
+                GameManager.Instance.RPC_Goal(PlayerData.Get(Runner, Runner.LocalPlayer).Team);
+            }
+        }
+    }
+
     //double checking the raycast hit from the host too
     private bool RaycastAShot(out PlayerRef hitPlayer, out EnderCharacterController playerController)
     {
@@ -172,15 +181,4 @@ public class EnderCharacterController : NetworkBehaviour
         }
         return false;
     }
-
-    //private PlayerRef GetInputAuthority()
-    //{
-    //    foreach(PlayerRef player in Runner.ActivePlayers)
-    //    {
-    //        Debug.Log($"{player} player has this object {PlayerData.Get(Runner, player).Avatar}, I am {Object}");
-    //        if(PlayerData.Get(Runner, player).Avatar == Object)
-    //            return player;
-    //    }
-    //    throw new IndexOutOfRangeException("playerRef has no PlayerData associated with it");
-    //}
 }
