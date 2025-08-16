@@ -53,8 +53,6 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     [SerializeField] private TMP_Text notificationText;
     [SerializeField] private TMP_Text infoUiText;
     [SerializeField] private TMP_Text quitButtonText;
-
-
     
     private Coroutine runningInfoUiCoroutine;
     
@@ -182,17 +180,22 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
-        if (!Object.HasStateAuthority) return;
+        if(runningInfoUiCoroutine != null)
+            StopCoroutine(runningInfoUiCoroutine);
         
         runningInfoUiCoroutine = StartCoroutine(ClearInfoUiTextCoroutine());
+        
+        if (!Object.HasStateAuthority) return;
+        
         Debug.Log( "coroutine star ted");
         SpawnedCharacters.Remove(player);
     }
     
+    
     private IEnumerator ClearInfoUiTextCoroutine()
     {
         if (infoUiText == null) yield break;
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(8f);
         Debug.Log( "Clearing info UI text after delay.");
         infoUiText.text = string.Empty;
     }
@@ -209,7 +212,6 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
             Debug.Log("Quit To Lobby");
             RPC_UpdateHostPlayerLeft(PlayerData.Get(_nRunner, _nRunner.LocalPlayer).Nickname.Value,
                 _nRunner.ActivePlayers.Count() - 1);
-            QuitGame();
         }
     }
 
@@ -234,6 +236,9 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
         
         if (runningInfoUiCoroutine != null)
             StopCoroutine(runningInfoUiCoroutine);
+        
+        if(PlayerData.Get(_nRunner, _nRunner.LocalPlayer).Nickname == name)
+            QuitGame();
     }
     
 

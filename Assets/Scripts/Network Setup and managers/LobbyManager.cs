@@ -83,11 +83,11 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     
     private bool shouldUpdatePlayerList = false;
     private float updatePlayerListTimer = 0;
-    private int updatePlayerListInterval = 3; 
+    private float updatePlayerListInterval = 1.5f; 
     
     private bool shouldPushName = false;
     private float updatePushNameTimer = 0;
-    private int updatePushNameInterval = 3; 
+    private float updatePushNameInterval = 1.5f; 
     
 
     private void Awake()
