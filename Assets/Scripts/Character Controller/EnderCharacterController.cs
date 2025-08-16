@@ -60,7 +60,6 @@ public class EnderCharacterController : NetworkBehaviour
             {
                 if (RaycastAShot(out PlayerRef myHitPlayer, out EnderCharacterController hitController))
                 {
-                    Debug.Log($"Client hit {enderData.hitTarget}, I hit {myHitPlayer}, they are frozen {hitController.Frozen}");
                     if (myHitPlayer == enderData.hitTarget && !hitController.Frozen)
                     {
                         hitController.Freeze();
@@ -159,7 +158,6 @@ public class EnderCharacterController : NetworkBehaviour
         Physics.Raycast(ray, out RaycastHit hitInfo);
 
         //start filtering the possible hits until you find who was hit if anyone was hit at all
-        Debug.Log(hitInfo.collider.gameObject.tag);
         if (hitInfo.collider.gameObject.tag == gameObject.tag)
         {
             NetworkObject hitObject = hitInfo.transform.GetComponent<NetworkObject>();

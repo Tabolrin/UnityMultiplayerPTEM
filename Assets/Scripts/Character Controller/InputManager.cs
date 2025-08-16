@@ -131,7 +131,7 @@ public class InputManager : MonoBehaviour
             NetworkObject hitObject = hitInfo.transform.GetComponent<NetworkObject>();
             foreach (PlayerRef playerRef in runner.ActivePlayers)
             {
-                if (PlayerData.Get(runner, playerRef).Avatar == hitObject)
+                if (PlayerData.Get(runner, playerRef).Avatar == hitObject && PlayerData.Get(runner, playerRef).Team != PlayerData.Get(runner, runner.LocalPlayer).Team)
                 {
                     hitPlayer = playerRef;
                     return true;
