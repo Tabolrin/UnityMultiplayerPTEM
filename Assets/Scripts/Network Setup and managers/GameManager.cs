@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Fusion;
-using Fusion.Addons.Physics;
 using Fusion.Sockets;
 using TMPro;
 using UnityEngine;
@@ -58,9 +57,7 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     [SerializeField] private TMP_Text scoreUiText;
     
     private Coroutine runningInfoUiCoroutine;
-    private bool shouldUpdateScore = false;
-    
-    public AstronautColor GetTeamColor(byte team) => team == 0 ? Team0Color : Team1Color;
+    private bool shouldUpdateScore = false; public AstronautColor GetTeamColor(byte team) => team == 0 ? Team0Color : Team1Color;
 
     public override void Spawned()
     {

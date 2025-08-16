@@ -1,21 +1,15 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ExitGames.Client.Photon.StructWrapping;
 using Fusion;
 using Fusion.Addons.Physics;
 using Fusion.Sockets;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Unity.Multiplayer;
-using Unity.VisualScripting;
-using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using WebSocketSharp;
-using Random = System.Random;
 
 public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
 {

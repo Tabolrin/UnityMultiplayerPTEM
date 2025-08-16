@@ -1,8 +1,6 @@
 using Fusion;
 using UnityEngine;
 
-
-
 public enum AstronautColor { Orange, Pink, White, Yellow}
 
 public class EnderCharacterController : NetworkBehaviour

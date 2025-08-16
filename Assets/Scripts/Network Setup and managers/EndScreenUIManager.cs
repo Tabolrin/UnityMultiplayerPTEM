@@ -1,4 +1,3 @@
-using System;
 using Fusion;
 using TMPro;
 using UnityEngine;
@@ -7,6 +6,7 @@ public class EndScreenUIManager : MonoBehaviour
 {
     private NetworkRunner _runner;
     [SerializeField] private TMP_Text personalScoreText;
+    [SerializeField] private TMP_Text winLoseText;
 
     private void Awake()
     {
@@ -15,7 +15,11 @@ public class EndScreenUIManager : MonoBehaviour
 
     void Start()
     {
+        if(SaveWinningTeam.Instance.WinningTeam == PlayerData.Get(_runner, _runner.LocalPlayer).Team)
+            winLoseText.text = "Your Team Won!";
+        else
+            winLoseText.text = "Your Team Lost!";
+        
         personalScoreText.text = "Personal Score: " + SaveWinningTeam.Instance.PlayerScores[_runner.LocalPlayer];
-        Debug.Log("Next scene has " + SaveWinningTeam.Instance.WinningTeam);
     }
 }

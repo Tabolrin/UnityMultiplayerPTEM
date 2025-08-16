@@ -1,9 +1,7 @@
 using Fusion;
-using System.Collections.Generic;
-using System.Runtime.InteropServices.ComTypes;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEngine.Rendering.DebugUI;
+
 
 public class InputManager : MonoBehaviour
 {
