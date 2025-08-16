@@ -18,7 +18,8 @@ public class EnderCharacterController : NetworkBehaviour
 
     [Networked] AstronautColor myColor { get; set; } = AstronautColor.White;
 
-    [Networked][OnChangedRender(nameof(FreezeColor))] public bool Frozen { get; private set; }
+    [Networked][OnChangedRender(nameof(FreezeColor))] public bool Frozen { get; private set; } 
+    private bool colorFrozen = false; //OnChangedRender didnt work some times so we added a little failsafe
     [Networked] public int score { get; private set; }
 
     public override void Spawned()
@@ -43,6 +44,9 @@ public class EnderCharacterController : NetworkBehaviour
 
     public override void FixedUpdateNetwork()
     {
+        if (Frozen && !colorFrozen)
+            FreezeColor();
+
         if(GetInput(out EnderInputData enderData))
         {
             transform.rotation = enderData.LookRotation;
@@ -95,6 +99,7 @@ public class EnderCharacterController : NetworkBehaviour
                 meshRenderer.material = matContainer.freezeYellowMaterial;
                 break;                               
         }
+        colorFrozen = true;
     }
     
     public void SetColor(AstronautColor color)
