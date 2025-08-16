@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Fusion;
 using Fusion.Addons.Physics;
 using Fusion.Sockets;
@@ -183,52 +184,63 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     {
         if (!Object.HasStateAuthority) return;
         
-        var data = PlayerData.Get(runner, player);
-        if (data != null && data.Avatar) 
-        {
-            infoUiText.text = $"{data.Nickname} has disconnected";
-            
-            if (runningInfoUiCoroutine != null)
-                StopCoroutine(runningInfoUiCoroutine);
-            
-            runningInfoUiCoroutine = StartCoroutine(ClearInfoUiTextCoroutine());
-            runner.Despawn(data.Avatar);
-            SpawnedCharacters.Remove(player);
-            data.Avatar = null; 
-        }
+        runningInfoUiCoroutine = StartCoroutine(ClearInfoUiTextCoroutine());
+        Debug.Log( "coroutine star ted");
+        SpawnedCharacters.Remove(player);
     }
     
     private IEnumerator ClearInfoUiTextCoroutine()
     {
         if (infoUiText == null) yield break;
         yield return new WaitForSeconds(5f);
+        Debug.Log( "Clearing info UI text after delay.");
         infoUiText.text = string.Empty;
     }
 
     
-    public void QuitButttonPressed()
+    public void QuitButtonPressed()
     {
         if (_nRunner.IsServer)
         {
-            HostCloseRoom();
+            RPC_CloseRoom();
         }
         else
         {
+            Debug.Log("Quit To Lobby");
+            RPC_UpdateHostPlayerLeft(PlayerData.Get(_nRunner, _nRunner.LocalPlayer).Nickname.Value,
+                _nRunner.ActivePlayers.Count() - 1);
             QuitGame();
         }
     }
-    
-    
-    private void HostCloseRoom() { RPC_CloseRoom(); }
 
+    [Rpc (RpcSources.All, RpcTargets.StateAuthority, HostMode = RpcHostMode.SourceIsHostPlayer)]
+    public void RPC_UpdateHostPlayerLeft(string name, int playerCount)
+    {
+        Debug.Log( "host rpc running Player left: " + name + ", Remaining players: " + playerCount);
+        infoUiText.text = name + uiNotificationTexts.PlayerLeftMatch + playerCount;
+
+        if (runningInfoUiCoroutine != null)
+            StopCoroutine(runningInfoUiCoroutine);
+        
+        RPC_UpdatePlayersPlayerLeft(name, playerCount);
+    }
+    
+    [Rpc (RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsServer)]
+    private void RPC_UpdatePlayersPlayerLeft(string name, int playerCount)
+    {
+        Debug.Log( "client rpc running Player left: " + name + ", Remaining players: " + playerCount);
+
+        infoUiText.text = name + uiNotificationTexts.PlayerLeftMatch + playerCount;
+        
+        if (runningInfoUiCoroutine != null)
+            StopCoroutine(runningInfoUiCoroutine);
+    }
+    
 
     [Rpc (RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsHostPlayer)]
     private void RPC_CloseRoom()
     {
         ToggleObject(closedGamePanel);
-        
-        if(_nRunner.IsServer)
-            QuitGame();
     }
     
     
@@ -260,22 +272,16 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
         }
     }
     
-    
-    public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
-    {
-        sceneManager.OfflineMoveToScene("Lobby");
-    }
-    
-    
 
     #region TheShadowRealm5.0
 
+    public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason) { }
+    public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) { }
     public void OnReliableDataProgress(NetworkRunner runner, PlayerRef player, ReliableKey key, float progress) {}
     public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player){}
     public void OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player) {}
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) {}
     public void OnConnectedToServer(NetworkRunner r) {}
-    public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason) {}
     public void OnConnectRequest(NetworkRunner r, NetworkRunnerCallbackArgs.ConnectRequest req, byte[] t) {}
     public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason) {}
     public void OnUserSimulationMessage(NetworkRunner r, SimulationMessagePtr msg) {}

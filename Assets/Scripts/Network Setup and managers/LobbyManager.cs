@@ -28,6 +28,8 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     const string EndersLobby = "Ender's";
     const string MoxieLobby  = "Moxie's";
     const string BillsLobby  = "Bill's";
+    
+    const string JoiningTxt  = "Joining...";
 
     private string currentLobby;
     private bool NewSessionCreation = false;
@@ -232,7 +234,24 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         }
         else
         {
-            Debug.LogError($"Game join failed: {result.ShutdownReason}");
+            switch (result.ShutdownReason)
+            {
+                case ShutdownReason.GameClosed:
+                    notificationPanelText.text = uiNotificationTexts.SessionLocked;
+                    TogglePanelVisibility(notificationPanel);
+                    break;
+                
+                case ShutdownReason.GameIsFull:
+                    notificationPanelText.text = uiNotificationTexts.SessionFull;
+                    TogglePanelVisibility(notificationPanel);
+                    break;
+                
+                default:
+                    notificationPanelText.text = uiNotificationTexts.FailedToJoinSession + result.ShutdownReason;
+                    TogglePanelVisibility(notificationPanel);
+                    break;
+            }
+
             ToggleButtonInteractivity(lobbyButtons);
         }
     }
@@ -393,6 +412,17 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
             return;
         }
 
+        foreach (var playerName in playerNamesTexts)
+        {
+            if (playerName.text == JoiningTxt)
+            {
+                Debug.LogWarning("Some players are still joining, please wait.");
+                notificationPanelText.text = uiNotificationTexts.PlayersStillJoining;
+                TogglePanelVisibility(notificationPanel);
+                return;
+            }
+        }
+
         shouldUpdatePlayerList = false;
         bool isTeam0 = true;
         foreach (var player in _runner.ActivePlayers)
@@ -476,11 +506,9 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
 
         if (player == runner.LocalPlayer)
         {
-            Debug.Log($"if");
             shouldPushName = true;
             TryApplyPendingNickname();
         }
-        Debug.Log($"ifn't");
 
         UpdatePlayersList();
     }
@@ -502,7 +530,6 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     public void UpdatePlayersList()
     {
         if (_runner == null) return;
-        //Debug.Log("Updating Player List");
 
         List<PlayerRef> players = _runner.ActivePlayers.ToList();
         
@@ -516,7 +543,7 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
             else
             {
                 var playerData = PlayerData.Get(_runner, players[i]);
-                playerNamesTexts[i].text = (playerData != null && !playerData.Nickname.Value.IsNullOrEmpty()) ? playerData.Nickname.ToString() : "Joining...";
+                playerNamesTexts[i].text = (playerData != null && !playerData.Nickname.Value.IsNullOrEmpty()) ? playerData.Nickname.ToString() : JoiningTxt;
                 
                 if(!playerData || playerData.Nickname.Value.IsNullOrEmpty()) 
                     shouldUpdatePlayerList = true;

@@ -38,8 +38,6 @@ public class PlayerData : NetworkBehaviour
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     public void RPC_Set(NetworkString<_32> nickname, RpcInfo _ = default) 
     {
-        Debug.Log(nickname + " nickname shall be set!");
         Nickname   = nickname;
-        Debug.Log(Nickname + " nickname in pd was set!");
     }
 }

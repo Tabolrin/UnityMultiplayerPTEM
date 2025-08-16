@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b72f28553deb054681b28470c750a89, type: 3}
   m_Name: UiNotificationTexts
   m_EditorClassIdentifier: 
+  <SessionLocked>k__BackingField: Session is locked
   <SessionFull>k__BackingField: Session is full!
+  <FailedToJoinSession>k__BackingField: 'Failed to join session. Reson: '
   <MinimalPlayerCountNotReached>k__BackingField: Number of players is below the minimal
     amount!
   <MaximalPlayerCountExceeded>k__BackingField: Number of players exceeds the maximal
@@ -22,7 +24,6 @@ MonoBehaviour:
   <FailedToStartSession>k__BackingField: Failed to create room
   <NicknameAlreadyExists>k__BackingField: Nickname already exists!
   <NicknameEmptyOrNull>k__BackingField: Nickname cannot be empty
-  <IdAlreadyExists>k__BackingField: Unable to join room.
-  <MasterKillGame>k__BackingField: The host has closed the room. You will be returned
-    to the Lobby.
   <NicknameLengthError>k__BackingField: Name must be between 2-10 characters
+  <PlayersStillJoining>k__BackingField: Some players are still joining, please wait
+  <PlayerLeftMatch>k__BackingField: ' has disconnected\nplayers left: '
