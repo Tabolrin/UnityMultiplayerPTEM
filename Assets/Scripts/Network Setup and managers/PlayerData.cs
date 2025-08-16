@@ -9,7 +9,7 @@ public class PlayerData : NetworkBehaviour
     [Networked] public AstronautColor TeamColor { get; set; }
     [Networked] public NetworkObject Avatar { get; set; }
     public EnderCharacterController enderCharacterController;
-    
+
     private void Awake()
     {
         DontDestroyOnLoad(this);

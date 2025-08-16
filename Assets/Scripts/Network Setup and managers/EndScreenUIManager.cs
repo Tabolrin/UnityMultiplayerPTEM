@@ -1,16 +1,21 @@
+using System;
+using Fusion;
+using TMPro;
 using UnityEngine;
 
 public class EndScreenUIManager : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private NetworkRunner _runner;
+    [SerializeField] private TMP_Text personalScoreText;
+
+    private void Awake()
     {
-        Debug.Log("Next scene has " + SaveWinningTeam.Instance.WinningTeam);
+        _runner = NetworkRunner.GetRunnerForScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
     }
 
-    // Update is called once per frame
-    void Update()
+    void Start()
     {
-        
+        personalScoreText.text = "Personal Score: " + SaveWinningTeam.Instance.PlayerScores[_runner.LocalPlayer];
+        Debug.Log("Next scene has " + SaveWinningTeam.Instance.WinningTeam);
     }
 }
