@@ -6,12 +6,15 @@ public class PlayerData : NetworkBehaviour
 {
     [Networked] public NetworkString<_32> Nickname { get; set; }
     [Networked] public byte Team { get; set; }
-    [Networked] public byte ColorIndex { get; set; }
+    [Networked] public AstronautColor TeamColor { get; set; }
     [Networked] public NetworkObject Avatar { get; set; }
+    
+    ScoreData scoreData;
 
     private void Awake()
     {
         DontDestroyOnLoad(this);
+        
     }
 
     public static PlayerData Get(NetworkRunner runner, PlayerRef player)
@@ -32,6 +35,11 @@ public class PlayerData : NetworkBehaviour
             data.RPC_Set(nickname);
         else 
             Debug.LogWarning("PlayerData not spawned yet. Try again shortly.");
+    }
+    
+    public void SetScoreData()
+    { 
+        scoreData = new ScoreData(Nickname.Value, 0, TeamColor);
     }
 
     

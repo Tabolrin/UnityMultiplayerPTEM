@@ -32,8 +32,8 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     [Networked] public bool GameStarted { get; set; }
     
     [Header("Team Colors")]
-    [Networked] public byte Team0ColorByte { get; set; } // stores AstronautColor as byte
-    [Networked] public byte Team1ColorByte { get; set; }
+    [Networked] public AstronautColor Team0Color { get; set; } 
+    [Networked] public AstronautColor Team1Color { get; set; }
     
     [SerializeField] private SceneManager sceneManager;
     [SerializeField] private UiNotificationTexts uiNotificationTexts;
@@ -56,7 +56,7 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     
     private Coroutine runningInfoUiCoroutine;
     
-    public AstronautColor GetTeamColor(byte team) => (AstronautColor)(team == 0 ? Team0ColorByte : Team1ColorByte);
+    public AstronautColor GetTeamColor(byte team) => team == 0 ? Team0Color : Team1Color;
 
     public override void Spawned()
     {
@@ -115,8 +115,8 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
         while (c1.Equals(c0) && guard++ < colorCount)
             c1 = (AstronautColor)Random.Range(0, colorCount);
         
-        Team0ColorByte = (byte)c0;
-        Team1ColorByte = (byte)c1;
+        Team0Color = c0;
+        Team1Color = c1;
     }
 
     private void ResetSpawnPools()
@@ -161,11 +161,12 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
 
         var data = PlayerData.Get(_nRunner, player);
         if (data == null) return;
-
+        
         var spawn = TakeSpawn(data.Team);
         var pos   = spawn ? spawn.position : Vector3.zero;
         var rot   = spawn ? spawn.rotation : Quaternion.identity;
 
+        data.SetScoreData();
         var avatar = _nRunner.Spawn(avatarPrefab, pos, rot, player);
         SpawnedCharacters.Add(player, avatar);
         data.Avatar = avatar;
