@@ -3,7 +3,7 @@ using UnityEngine;
 
 
 
-public enum AstronautColor { Black, Blue, Green, Orange, Pink, Red, White, Yellow, Gray}
+public enum AstronautColor { Orange, Pink, White, Yellow}
 
 public class EnderCharacterController : NetworkBehaviour
 {
@@ -16,7 +16,7 @@ public class EnderCharacterController : NetworkBehaviour
     [SerializeField] private Rigidbody rb;
     [SerializeField] private LaserPulse laser;
 
-    [Networked] AstronautColor myColor { get; set; } = AstronautColor.Gray;
+    [Networked] AstronautColor myColor { get; set; } = AstronautColor.White;
 
     [Networked][OnChangedRender(nameof(FreezeColor))] public bool Frozen { get; private set; }
     [Networked] public int score { get; private set; }
@@ -79,33 +79,21 @@ public class EnderCharacterController : NetworkBehaviour
     {
         switch (myColor)
         {
-            case AstronautColor.Black:
-                meshRenderer.material = matContainer.freezeBlackMaterial;
-                break;                               
-            case AstronautColor.Blue:                
-                meshRenderer.material = matContainer.freezeBlueMaterial;
-                break;                               
-            case AstronautColor.Green:               
-                meshRenderer.material = matContainer.freezeGreenMaterial;
-                break;                               
             case AstronautColor.Orange:              
                 meshRenderer.material = matContainer.freezeOrangeMaterial;
-                break;                               
+                break;    
+            
             case AstronautColor.Pink:                
                 meshRenderer.material = matContainer.freezePinkMaterial;
-                break;                               
-            case AstronautColor.Red:                 
-                meshRenderer.material = matContainer.freezeRedMaterial;
-                break;                               
+                break; 
+            
             case AstronautColor.White:               
                 meshRenderer.material = matContainer.freezeWhiteMaterial;
-                break;                               
+                break; 
+            
             case AstronautColor.Yellow:              
                 meshRenderer.material = matContainer.freezeYellowMaterial;
                 break;                               
-            case AstronautColor.Gray:                
-                meshRenderer.material = matContainer.freezeGrayMaterial;
-                break;
         }
     }
     
@@ -114,32 +102,20 @@ public class EnderCharacterController : NetworkBehaviour
         myColor = color;
         switch (color)
         {
-            case AstronautColor.Black:
-                meshRenderer.material = matContainer.blackMaterial;
-                break;
-            case AstronautColor.Blue:
-                meshRenderer.material = matContainer.blueMaterial;
-                break;
-            case AstronautColor.Green:
-                meshRenderer.material = matContainer.greenMaterial;
-                break;
             case AstronautColor.Orange:
                 meshRenderer.material = matContainer.orangeMaterial;
                 break;
+            
             case AstronautColor.Pink:
                 meshRenderer.material = matContainer.pinkMaterial;
                 break;
-            case AstronautColor.Red:
-                meshRenderer.material = matContainer.redMaterial;
-                break;
+    
             case AstronautColor.White:
                 meshRenderer.material = matContainer.whiteMaterial;
                 break;
+            
             case AstronautColor.Yellow:
                 meshRenderer.material = matContainer.yellowMaterial;
-                break;
-            case AstronautColor.Gray:
-                meshRenderer.material = matContainer.grayMaterial;
                 break;
         }
     }
