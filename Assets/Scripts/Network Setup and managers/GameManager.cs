@@ -159,7 +159,7 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     
     private void PickTeamColorsFromPool()
     {
-        const int colorCount = 8;
+        const int colorCount = 4;
         
         // pick one for team 0
         AstronautColor c0 = (AstronautColor)(Random.Range(0, colorCount));
