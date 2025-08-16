@@ -161,6 +161,18 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     {
         foreach (var p in _nRunner.ActivePlayers)
             SpawnOne(p);
+        
+        
+    }
+    
+    [Rpc (RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsHostPlayer)]
+    private void RPC_UpdateColors()
+    {
+        foreach (var player in _nRunner.ActivePlayers)
+        {
+            var data = PlayerData.Get(_nRunner, player);
+            data.Avatar.GetComponent<EnderCharacterController>().SetColor(data.TeamColor);
+        }
     }
 
     private void SpawnOne(PlayerRef player)
