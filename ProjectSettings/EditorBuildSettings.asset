@@ -6,16 +6,16 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/New/Lobby.unity
+    path: Assets/Scenes/Lobby.unity
     guid: e1933e263c1507d4fb691393b5750f8e
   - enabled: 1
-    path: Assets/Scenes/New/EasyMap.unity
+    path: Assets/Scenes/EasyMap.unity
     guid: 3b15555aad048d0418a4d2d65e862446
   - enabled: 1
-    path: Assets/Scenes/New/HarderMap.unity
+    path: Assets/Scenes/HarderMap.unity
     guid: 37f8149662bba254fab182421dcebe46
   - enabled: 1
-    path: Assets/Scenes/New/EndingScene.unity
+    path: Assets/Scenes/EndingScene.unity
     guid: c3a151272969e224bb60ae7490777db6
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 0cb5daa49acb1a140a7a44f051629aa0, type: 2}

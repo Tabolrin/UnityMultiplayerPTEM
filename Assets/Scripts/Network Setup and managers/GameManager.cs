@@ -37,9 +37,11 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     [SerializeField] private SceneManager sceneManager;
     [SerializeField] private UiNotificationTexts uiNotificationTexts;
     [SerializeField] private InputManager inputManager;
+    [SerializeField] private CanvasGroup genaralCanvasGroup;
     
     [Header("Panels")]
     [SerializeField] private GameObject notificationPanel;
+    [SerializeField] private GameObject closedGamePanel;
     [SerializeField] private GameObject leaderboardPanel;
     
     [Header("Buttons")]
@@ -47,9 +49,10 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     
     [Header("Text Boxes")]
     [SerializeField] private TMP_Text[] leaderboardText;
-    [SerializeField] private TMP_Text notificatoinText;
+    [SerializeField] private TMP_Text notificationText;
     [SerializeField] private TMP_Text infoUiText;
     [SerializeField] private TMP_Text quitButtonText;
+
 
     
     private Coroutine runningInfoUiCoroutine;
@@ -61,11 +64,6 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
         Instance = this;
         _nRunner = Runner;
         _nRunner.AddCallbacks(this);
-
-        foreach (var player in _nRunner.ActivePlayers)
-        {
-            Debug.Log(PlayerData.Get(_nRunner, player).Nickname);
-        }
         
         if (_nRunner.IsServer)
         {
@@ -78,7 +76,6 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
         else
         {
             quitButtonText.text = "Quit To Lobby";
-
         }
     }
 
@@ -208,31 +205,59 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
         infoUiText.text = string.Empty;
     }
 
-    public void HostCloseRoom() { RPC_CloseRoom(); }
+    
+    public void QuitButttonPressed()
+    {
+        if (_nRunner.IsServer)
+        {
+            HostCloseRoom();
+        }
+        else
+        {
+            QuitGame();
+        }
+    }
+    
+    
+    private void HostCloseRoom() { RPC_CloseRoom(); }
 
 
     [Rpc (RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsHostPlayer)]
     private void RPC_CloseRoom()
     {
-        notificatoinText.text = uiNotificationTexts.HostClosedRoom;
-        notificationPanel.SetActive(true);
+        ToggleObject(closedGamePanel);
+        
+        if(_nRunner.IsServer)
+            QuitGame();
     }
-
-    
-    public void KillGame() { _nRunner.Shutdown(); }
     
     
-    public void LeaveAfterHost()
+    public void QuitGame()
     {
         if (_nRunner != null && _nRunner.IsRunning)
-        {
-            _nRunner.Shutdown(); 
-        }
+            _nRunner.Shutdown();
+        
+        sceneManager.OfflineMoveToScene(LobbyManager.LOBBY_SCENE_NAME);
     }
 
     public void OnInput(NetworkRunner r, NetworkInput input)
     {
         inputManager.OnInput(r, input);
+    }
+    
+    public void ToggleObject(GameObject obj)
+    {
+        if (obj)
+        {
+            if (obj == notificationPanel || obj == closedGamePanel)
+                genaralCanvasGroup.interactable = !genaralCanvasGroup.interactable;
+                 
+            obj.SetActive(!obj.activeSelf);
+        }
+        else
+        {
+            Debug.LogWarning("Object is not assigned.");
+        }
     }
     
     

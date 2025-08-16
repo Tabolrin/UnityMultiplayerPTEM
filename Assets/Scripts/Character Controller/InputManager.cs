@@ -20,11 +20,16 @@ public class InputManager : MonoBehaviour
     private bool shouldInputMove = false;
     private bool shouldInputShoot = false;
 
-    private NetworkRunner runner { get {
+    private NetworkRunner runner 
+    { 
+        get 
+        {
             if (!_runner_var)
                 _runner_var = NetworkRunner.GetRunnerForScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
             return _runner_var;
-        } }
+        } 
+    }
+    
     private NetworkRunner _runner_var;
 
 
@@ -50,6 +55,7 @@ public class InputManager : MonoBehaviour
             enderData.velocity = movement;
             enderData.buttons.Set(ButtonDefenitions.Move, true);
         }
+        
         if (shouldInputShoot)
         {
             shouldInputShoot = false;
@@ -59,6 +65,7 @@ public class InputManager : MonoBehaviour
 
         input.Set(enderData);
     }
+    
 
     //proccess the input between ticks
     private void Update()
@@ -84,6 +91,21 @@ public class InputManager : MonoBehaviour
         movement = _lookDirection * Vector3.forward * playerStats.MoveSpeed;
         shouldInputMove = true;
     }
+
+    public void OnMouseToggle(InputAction.CallbackContext inputContext)
+    {
+        if (!Cursor.visible)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+    }
+    
     public void OnShoot(InputAction.CallbackContext inputContext) 
     {
         movement = _lookDirection * Vector3.forward * playerStats.MoveSpeed;
@@ -102,9 +124,9 @@ public class InputManager : MonoBehaviour
         Transform myPlayer = PlayerData.Get(runner, runner.LocalPlayer).Avatar.transform;
         Ray ray = new Ray(myPlayer.position, myPlayer.forward);
         Physics.Raycast(ray, out RaycastHit hitInfo);
-
+        
         //start filtering the possible hits until you find who was hit if anyone was hit at all
-        if (hitInfo.collider.gameObject.CompareTag(playerLayer))
+        if (hitInfo.collider && hitInfo.collider.gameObject.CompareTag(playerLayer))
         {
             NetworkObject hitObject = hitInfo.transform.GetComponent<NetworkObject>();
             foreach (PlayerRef playerRef in runner.ActivePlayers)

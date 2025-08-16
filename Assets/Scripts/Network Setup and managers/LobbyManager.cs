@@ -19,8 +19,11 @@ using Random = System.Random;
 
 public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
 {
+    public const string LOBBY_SCENE_NAME = "Lobby";
     public const string HARD_GAME_SCENE_NAME = "HarderMap";
     public const string EASY_GAME_SCENE_NAME = "EasyMap";
+    public const string END_SCREEN_SCENE_NAME = "EndingScene";
+
     
     const string EndersLobby = "Ender's";
     const string MoxieLobby  = "Moxie's";
