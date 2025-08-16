@@ -161,8 +161,8 @@ public class GameManager : NetworkBehaviour, INetworkRunnerCallbacks
     {
         foreach (var p in _nRunner.ActivePlayers)
             SpawnOne(p);
-        
-        
+
+        RPC_UpdateColors();
     }
     
     [Rpc (RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsHostPlayer)]
