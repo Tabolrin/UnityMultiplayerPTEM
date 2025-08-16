@@ -40,8 +40,8 @@ public class EnderCharacterController : NetworkBehaviour
             model.SetActive(true);
             playerCamera.SetActive(false);
         }
-        PlayerRef me = GetInputAuthority();
-        SetColor(PlayerData.Get(Runner, me).TeamColor);
+        //PlayerRef me = GetInputAuthority();
+        //SetColor(PlayerData.Get(Runner, me).TeamColor);
     }
 
     public override void FixedUpdateNetwork()
@@ -176,14 +176,14 @@ public class EnderCharacterController : NetworkBehaviour
         return false;
     }
 
-    private PlayerRef GetInputAuthority()
-    {
-        foreach(PlayerRef player in Runner.ActivePlayers)
-        {
-            Debug.Log($"{player} player has this object {PlayerData.Get(Runner, player).Avatar}, I am {Object}");
-            if(PlayerData.Get(Runner, player).Avatar == Object)
-                return player;
-        }
-        throw new IndexOutOfRangeException("playerRef has no PlayerData associated with it");
-    }
+    //private PlayerRef GetInputAuthority()
+    //{
+    //    foreach(PlayerRef player in Runner.ActivePlayers)
+    //    {
+    //        Debug.Log($"{player} player has this object {PlayerData.Get(Runner, player).Avatar}, I am {Object}");
+    //        if(PlayerData.Get(Runner, player).Avatar == Object)
+    //            return player;
+    //    }
+    //    throw new IndexOutOfRangeException("playerRef has no PlayerData associated with it");
+    //}
 }
