@@ -57,6 +57,9 @@ public class EnderCharacterController : NetworkBehaviour
                 if (laser)
                     laser.Pulse();
 
+                PlayerData.Get(Runner, enderData.hitTarget).enderCharacterController.Freeze();
+                score += 1000;
+                /*
                 if (RaycastAShot(out PlayerRef myHitPlayer, out EnderCharacterController hitController))
                 {
                     if (myHitPlayer == enderData.hitTarget && !hitController.Frozen)
@@ -65,6 +68,7 @@ public class EnderCharacterController : NetworkBehaviour
                         score+= 1000;
                     }
                 }
+                */
             }
         }
     }
