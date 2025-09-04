@@ -111,7 +111,6 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
             SessionName    = SessionNameInput,
             CustomLobbyName= _runner.LobbyInfo != null ? _runner.LobbyInfo.Name : null,
             IsVisible      = publicSessionToggle != null ? publicSessionToggle.isOn : true,
-            //TODO: REMOVE IF not needed
             Scene = scene,
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
         };
@@ -134,8 +133,6 @@ public class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
         {
             TogglePanelVisibility(newSessionPanel);
             OnGameStarted(_runner);
-            
-            //TryApplyPendingNickname();
         }
         else
         {

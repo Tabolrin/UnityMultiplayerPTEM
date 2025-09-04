@@ -68,12 +68,7 @@ public class EnderCharacterController : NetworkBehaviour
             }
         }
     }
-
-    //private void Update()
-    //{
-    //    if (Frozen && !colorFrozen)
-    //        FreezeColor();
-    //}
+    
 
     public void Freeze()
     {
@@ -100,7 +95,7 @@ public class EnderCharacterController : NetworkBehaviour
                 meshRenderer.material = matContainer.freezeYellowMaterial;
                 break;                               
         }
-        //colorFrozen = true;
+
     }
     
     public void SetColor(AstronautColor color)
@@ -161,8 +156,7 @@ public class EnderCharacterController : NetworkBehaviour
         //find who my player is and then raycast from them
         Ray ray = new Ray(transform.position, transform.forward);
         Physics.Raycast(ray, out RaycastHit hitInfo);
-
-        //Debug.Log("EnderController hit " + hitInfo.collider.gameObject.tag);
+        
         //start filtering the possible hits until you find who was hit if anyone was hit at all
         if (hitInfo.collider.gameObject.tag == gameObject.tag)
         {

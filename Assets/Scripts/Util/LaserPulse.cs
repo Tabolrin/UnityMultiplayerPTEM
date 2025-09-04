@@ -16,7 +16,8 @@ public class LaserPulse : MonoBehaviour
 
     void Awake()
     {
-        if (!lineRenderer) lineRenderer = gameObject.AddComponent<LineRenderer>();
+        if (!lineRenderer) 
+            lineRenderer = gameObject.AddComponent<LineRenderer>();
 
         lineRenderer.enabled = false;
         lineRenderer.positionCount = 2;
@@ -25,7 +26,9 @@ public class LaserPulse : MonoBehaviour
         lineRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         lineRenderer.receiveShadows = false;
         lineRenderer.alignment = LineAlignment.View;
-        if (beamMaterial) lineRenderer.material = beamMaterial;
+        
+        if (beamMaterial)
+            lineRenderer.material = beamMaterial;
     }
 
     
